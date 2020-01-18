@@ -1,9 +1,6 @@
 RSpec.describe Lat do
-  it 'has a version number' do
-    expect(Lat::VERSION).not_to be nil
-  end
-
   it 'does something useful' do
-    expect(false).to eq(true)
+    mpv = MPV::Session.new
+    expect(mpv.get_property(:volume)).to eql(100.0)
   end
 end

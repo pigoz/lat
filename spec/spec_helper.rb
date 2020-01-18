@@ -1,4 +1,5 @@
 require 'bundler/setup'
+require 'mpv'
 require 'lat'
 
 RSpec.configure do |config|
