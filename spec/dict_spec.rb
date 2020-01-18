@@ -38,7 +38,14 @@ RSpec.describe Lat::Dict do
           lemma: 'アイドル',
           grammar: 'n',
           definition:
-            'young star|young entertainer|heartthrob|TV personality|idol',
+            'entertainer whose image is manufactured to cultivate a dedicated consumer fan following',
+          reading: 'アイドル'
+        ),
+        Lat::Dict::Result.new(
+          dictionary: 'myougiden',
+          lemma: 'アイドル',
+          grammar: 'adj-f',
+          definition: 'idle',
           reading: 'アイドル'
         )
       ]
