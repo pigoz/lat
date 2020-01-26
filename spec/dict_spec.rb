@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Lat::DictJp do
   let(:dict) { Lat::Dict.get(:jp).new }
 

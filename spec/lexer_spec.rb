@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Lat::LexerJp do
   let(:lexer) { Lat::Lexer.get(:jp).new }
 

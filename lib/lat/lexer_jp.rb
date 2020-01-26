@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'mojinizer'
 require 'natto'
 
@@ -19,7 +21,7 @@ module Lat
         particle: %w[助詞],
         punctuation: %w[記号],
         eos: %w[BOS/EOS]
-      }
+      }.freeze
 
       QUERIES.each do |k, v|
         define_method :"#{k}?" do
@@ -29,7 +31,7 @@ module Lat
 
       def grammar
         QUERIES.each { |x, _| return x if public_send(:"#{x}?") }
-        return g1.intern
+        g1.intern
       end
 
       def reading

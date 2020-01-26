@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Lat
   class DictJp
     def call(lemma:)
@@ -19,13 +21,13 @@ module Lat
       )
     end
 
-    def first_item(x)
-      x.split('；').first
+    def first_item(csvstring)
+      csvstring.split('；').first
     end
 
-    def parse_definition(x)
+    def parse_definition(definition)
       regexp = /\[(?<grammar>.+)\]\s(?<definition>.+)/
-      regexp.match(x).named_captures
+      regexp.match(definition).named_captures
     end
   end
 end

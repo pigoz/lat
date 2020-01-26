@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Lat
   module Factory
     extend ActiveSupport::Concern

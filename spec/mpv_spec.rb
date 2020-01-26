@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Lat do
   xit 'calls into mpv' do
     mpv = MPV::Session.new
