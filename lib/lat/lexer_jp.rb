@@ -40,8 +40,8 @@ module Lat
     private
 
     def mecab
-      dicdir = '/usr/local/lib/mecab/dic/mecab-ipadic-neologd/'
-      Natto::MeCab.new(dicdir: dicdir)
+      dic = ENV.fetch('MECAB_DICTIONARY', 'ipadic')
+      Natto::MeCab.new(dicdir: "/usr/local/lib/mecab/dic/#{dic}/")
     end
 
     def parse_result(result)
