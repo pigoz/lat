@@ -40,8 +40,14 @@ module Lat
     private
 
     def mecab
-      dic = ENV.fetch('MECAB_DICTIONARY', 'ipadic')
-      Natto::MeCab.new(dicdir: "/usr/local/lib/mecab/dic/#{dic}/")
+      Natto::MeCab.new(mecab_options)
+    end
+
+    def mecab_options
+      dic = ENV.fetch('MECAB_DICTIONARY')
+      { dicdir: "/usr/local/lib/mecab/dic/#{dic}/" }
+    rescue StandardError
+      {}
     end
 
     def parse_result(result)
