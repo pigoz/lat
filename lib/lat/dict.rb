@@ -1,5 +1,7 @@
 module Lat
   class Dict
+    include Lat::Factory
+
     Result =
       Struct.new(
         :dictionary,
@@ -9,13 +11,5 @@ module Lat
         :grammar,
         keyword_init: true
       )
-
-    def self.get(iso2:)
-      Kernel.const_get("Lat::Dict#{iso2.capitalize}")
-    end
-
-    def lookup(lemma:)
-      raise NotImplementedError, 'lookup is not implemented'
-    end
   end
 end

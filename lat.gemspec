@@ -28,5 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_dependency 'activesupport'
+  spec.add_dependency 'mojinizer'
   spec.add_dependency 'mpv'
+  spec.add_dependency 'natto'
 end

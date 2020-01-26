@@ -1,7 +1,8 @@
-RSpec.describe Lat::Dict do
-  it 'looks up japanese kanji noun' do
-    dict = Lat::Dict.get(iso2: :jp).new
-    expect(dict.lookup(lemma: '漢字')).to eql(
+RSpec.describe Lat::DictJp do
+  let(:dict) { Lat::Dict.get(:jp).new }
+
+  it 'looks up kanji noun' do
+    expect(dict.call(lemma: '漢字')).to eql(
       [
         Lat::Dict::Result.new(
           dictionary: 'myougiden',
@@ -14,9 +15,8 @@ RSpec.describe Lat::Dict do
     )
   end
 
-  it 'looks up japanese kanji n,vsuru' do
-    dict = Lat::Dict.get(iso2: :jp).new
-    expect(dict.lookup(lemma: '勉強')).to eql(
+  it 'looks up kanji n,vsuru' do
+    expect(dict.call(lemma: '勉強')).to eql(
       [
         Lat::Dict::Result.new(
           dictionary: 'myougiden',
@@ -29,9 +29,8 @@ RSpec.describe Lat::Dict do
     )
   end
 
-  it 'looks up japanese katakana n' do
-    dict = Lat::Dict.get(iso2: :jp).new
-    expect(dict.lookup(lemma: 'アイドル')).to eql(
+  it 'looks up katakana n' do
+    expect(dict.call(lemma: 'アイドル')).to eql(
       [
         Lat::Dict::Result.new(
           dictionary: 'myougiden',
@@ -52,9 +51,8 @@ RSpec.describe Lat::Dict do
     )
   end
 
-  it 'looks up japanese hiragana verb' do
-    dict = Lat::Dict.get(iso2: :jp).new
-    expect(dict.lookup(lemma: 'ささやく')).to eql(
+  it 'looks up hiragana verb' do
+    expect(dict.call(lemma: 'ささやく')).to eql(
       [
         Lat::Dict::Result.new(
           dictionary: 'myougiden',
