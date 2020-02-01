@@ -11,7 +11,8 @@ RSpec.describe Lat::Furigana do
     ['寝不足', 'ねぶそく', ' 寝[ね] 不[ぶ] 足[そく]'],
     ['威張る', 'いばる', ' 威[い] 張[ば]る'],
     ['煙草', 'たばこ', ' 煙[たば] 草[こ]'],
-    ['益々', 'ますます', ' 益[ます]々']
+    ['益々', 'ますます', ' 益[ます]々'],
+    ['田辺', 'たなべ', ' 田[た] 辺[なべ]']
   ].freeze
 
   TESTS.each do |t|
@@ -22,6 +23,6 @@ RSpec.describe Lat::Furigana do
   end
 
   xit 'generates database' do
-    Lat::Furigana.new.database!
+    Lat::DownloadDatabase.new.call
   end
 end
