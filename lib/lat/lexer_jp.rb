@@ -44,6 +44,8 @@ module Lat
     end
 
     def decode(string)
+      return string if @encoding == 'utf-8'
+
       require 'iconv'
       string = string.dup.force_encoding(@encoding)
       Iconv.conv('utf-8', @encoding, string)
