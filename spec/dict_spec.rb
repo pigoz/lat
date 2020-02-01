@@ -10,7 +10,7 @@ RSpec.describe Lat::DictJp do
           dictionary: 'myougiden',
           lemma: '漢字',
           grammar: 'n',
-          definition: 'Chinese characters|kanji (P)',
+          definition: 'kanji|Chinese characters (P)',
           reading: 'かんじ'
         )
       ]

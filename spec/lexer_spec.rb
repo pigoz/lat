@@ -40,4 +40,10 @@ RSpec.describe Lat::LexerJp do
       x4: '連用タ接続'
     )
   end
+
+  xit 'handles euc-jp ipadic' do
+    s = "\xB5\xAD\xB9\xE6,\xB0\xEC\xC8\xCC,*,*,*,*,*"
+    s = s.dup.force_encoding('euc-jp')
+    expect { Lat::LexerJp.new.decode(s).split(',') }.not_to raise_error
+  end
 end

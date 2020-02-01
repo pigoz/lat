@@ -39,6 +39,10 @@ module Lat
       end
     end
 
+    def decode(string)
+      string
+    end
+
     private
 
     def mecab
@@ -53,7 +57,7 @@ module Lat
     end
 
     def parse_result(result)
-      split = result.feature.split(',')
+      split = decode(result.feature).split(',')
       split = split.map { |x| x == '*' ? nil : x }
       feature = Hash[KEYS.zip(split.flatten)]
       Result.new(feature.merge(text: result.surface))

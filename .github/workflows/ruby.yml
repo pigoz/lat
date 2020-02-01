@@ -18,7 +18,7 @@ jobs:
         python -m pip install --upgrade pip
     - name: Install dependencies
       run: |
-        sudo apt-get install mecab mecab-ipadic libmecab-dev
+        sudo apt-get install mecab mecab-ipadic-utf8 libmecab-dev
         pip install myougiden
         updatedb-myougiden -f
         gem install bundler
