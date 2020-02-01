@@ -5,12 +5,15 @@ require 'natto'
 
 module Lat
   class LexerJp
-    def initialize(mecab_encoding: 'utf-8')
-      @encoding = mecab_encoding
+    attr_accessor :charset
+    attr_reader :mecab
+
+    def initialize
+      @mecab = Natto::MeCab.new(mecab_options)
+      @charset = detect_charset
     end
 
     def call(text)
-      @mecab ||= mecab
       @mecab.enum_parse(text).to_a.map { |r| parse_result(r) }
     end
 
@@ -44,17 +47,20 @@ module Lat
     end
 
     def decode(string)
-      return string if @encoding == 'utf-8'
+      return string if charset == 'utf-8'
 
       require 'iconv'
-      string = string.dup.force_encoding(@encoding)
-      Iconv.conv('utf-8', @encoding, string)
+      string = string.dup.force_encoding(charset)
+      Iconv.conv('utf-8', charset, string)
     end
 
     private
 
-    def mecab
-      Natto::MeCab.new(mecab_options)
+    def detect_charset
+      charsets = mecab.dicts.map(&:charset).uniq
+      Lat.assert { charsets.size == 1 }
+      charset = charsets.first
+      charset == 'utf8' ? 'utf-8' : charset
     end
 
     def mecab_options
