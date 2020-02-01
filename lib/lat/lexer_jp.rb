@@ -5,6 +5,10 @@ require 'natto'
 
 module Lat
   class LexerJp
+    def initialize(mecab_encoding: 'utf-8')
+      @encoding = mecab_encoding
+    end
+
     def call(text)
       @mecab ||= mecab
       @mecab.enum_parse(text).to_a.map { |r| parse_result(r) }
@@ -40,7 +44,9 @@ module Lat
     end
 
     def decode(string)
-      string
+      require 'iconv'
+      string = string.dup.force_encoding(@encoding)
+      Iconv.conv('utf-8', @encoding, string)
     end
 
     private
@@ -60,7 +66,7 @@ module Lat
       split = decode(result.feature).split(',')
       split = split.map { |x| x == '*' ? nil : x }
       feature = Hash[KEYS.zip(split.flatten)]
-      Result.new(feature.merge(text: result.surface))
+      Result.new(feature.merge(text: decode(result.surface)))
     end
   end
 end

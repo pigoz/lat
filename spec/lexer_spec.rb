@@ -41,9 +41,9 @@ RSpec.describe Lat::LexerJp do
     )
   end
 
-  xit 'handles euc-jp ipadic' do
+  it 'handles euc-jp ipadic' do
     s = "\xB5\xAD\xB9\xE6,\xB0\xEC\xC8\xCC,*,*,*,*,*"
-    s = s.dup.force_encoding('euc-jp')
-    expect { Lat::LexerJp.new.decode(s).split(',') }.not_to raise_error
+    d = Lat::LexerJp.new(mecab_encoding: 'euc-jp').decode(s)
+    expect(d).to eql('記号,一般,*,*,*,*,*')
   end
 end

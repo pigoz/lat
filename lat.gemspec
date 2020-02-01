@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.79.0'
   spec.add_dependency 'activesupport'
   spec.add_dependency 'diff-lcs'
+  spec.add_dependency 'iconv'
   spec.add_dependency 'mojinizer'
   spec.add_dependency 'mpv'
   spec.add_dependency 'natto'
