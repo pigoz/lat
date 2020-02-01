@@ -60,7 +60,7 @@ module Lat
       charsets = mecab.dicts.map(&:charset).uniq
       Lat.assert { charsets.size == 1 }
       charset = charsets.first
-      charset == 'utf8' ? 'utf-8' : charset
+      (charset == 'utf8' ? 'utf-8' : charset).downcase
     end
 
     def mecab_options
