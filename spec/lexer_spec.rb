@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Lat::LexerJp do
-  let(:lexer) { Lat::Lexer.get(:jp).new }
+RSpec.describe Lat::Lexer do
+  let(:lexer) { Lat::Lexer.new }
 
   it 'lexes a simple sentence' do
     r = lexer.call('暴力を振るって 人を傷つけるなんて— 最低よ！ 見損なったわ！')
@@ -51,12 +51,12 @@ RSpec.describe Lat::LexerJp do
 
   it 'handles euc-jp ipadic' do
     s = "\xB5\xAD\xB9\xE6,\xB0\xEC\xC8\xCC,*,*,*,*,*"
-    l = Lat::LexerJp.new
+    l = Lat::Lexer.new
     l.charset = 'euc-jp'
     expect(l.decode(s)).to eql('記号,一般,*,*,*,*,*')
   end
 
-  TESTS = [
+  tests = [
     [
       '現在 全ての通常回線は 不通となっております',
       ' 現[げん] 在[ざい]  全[すべ]ての 通[つう] 常[じょう] 回[かい] 線[せん]は  不[ふ] 通[つう]となっております',
@@ -74,10 +74,9 @@ RSpec.describe Lat::LexerJp do
     ]
   ].freeze
 
-  before(:each) { Lat::Blacklist.clear_default }
-
-  TESTS.each do |t|
+  tests.each do |t|
     it "converts to furigana (nbl) #{t.first}" do
+      Lat::Blacklist.clear_default
       x = lexer.to_text(lexer.call(t.first))
       expect(x).to eql(t.second)
     end

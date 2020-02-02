@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Lat::Furigana do
-  let(:dict) { Lat::Dict.get(:jp).new }
-
-  TESTS = [
+  tests = [
     ['勉強', 'べんきょう', ' 勉[べん] 強[きょう]'],
     ['単行本', 'たんこうぼん', ' 単[たん] 行[こう] 本[ぼん]'],
     ['見損なった', 'みそこなった', ' 見[み] 損[そこ]なった'],
@@ -15,7 +13,7 @@ RSpec.describe Lat::Furigana do
     ['田辺', 'たなべ', ' 田[た] 辺[なべ]']
   ].freeze
 
-  TESTS.each do |t|
+  tests.each do |t|
     it "works with #{t.first} => #{t.third}" do
       x = Lat::Furigana.new.call(text: t.first, reading: t.second)
       expect(x).to eql(t.third)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Lat::DictJp do
-  let(:dict) { Lat::Dict.get(:jp).new }
+RSpec.describe Lat::Dict do
+  let(:dict) { Lat::Dict.new }
 
   it 'looks up kanji noun' do
     expect(dict.call(lemma: '漢字')).to eql(
