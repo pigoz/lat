@@ -9,10 +9,10 @@ module Lat
   class Error < StandardError; end
   class AssertionError < StandardError; end
 
-  def self.assert(&block)
+  def self.assert(message, &block)
     return if block.call
 
-    raise AssertionError, "Assertion failed #{block.to_source}"
+    raise AssertionError, "Assertion failed: #{message}"
   end
 
   class S < Struct

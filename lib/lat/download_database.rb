@@ -15,7 +15,7 @@ class DownloadDatabase
 
   def data_to_list(data)
     data = data.split("\n").map { |x| JSON.parse(x) }
-    data.each { |d| Lat.assert { d['ki'].size == 1 } }
+    data.each { |d| Lat.assert('single kanji') { d['ki'].size == 1 } }
     data
   end
 

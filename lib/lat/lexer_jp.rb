@@ -58,7 +58,7 @@ module Lat
 
     def detect_charset
       charsets = mecab.dicts.map(&:charset).uniq
-      Lat.assert { charsets.size == 1 }
+      Lat.assert('single mecab encoding') { charsets.size == 1 }
       charset = charsets.first
       (charset == 'utf8' ? 'utf-8' : charset).downcase
     end
