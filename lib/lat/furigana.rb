@@ -7,6 +7,8 @@ require 'diff-lcs'
 module Lat
   class Furigana
     def call(text:, reading:)
+      return text unless text.present? && reading.present?
+
       best = guesses(text, reading).min_by(&:score)
       current = 0
       text.chars.zip(best.lreadings).map do |t, r|

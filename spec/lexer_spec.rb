@@ -16,7 +16,9 @@ RSpec.describe Lat::LexerJp do
       lemma: '暴力',
       reading1: 'ボウリョク',
       reading2: 'ボーリョク',
-      text: '暴力',
+      surface: '暴力',
+      surface_len: 6,
+      surface_rlen: 6,
       x1: nil,
       x2: nil,
       x3: nil,
@@ -33,7 +35,9 @@ RSpec.describe Lat::LexerJp do
       lemma: '見損なう',
       reading1: 'ミソコナッ',
       reading2: 'ミソコナッ',
-      text: '見損なっ',
+      surface: '見損なっ',
+      surface_len: 12,
+      surface_rlen: 13,
       x1: nil,
       x2: nil,
       x3: '五段・ワ行促音便',
@@ -42,7 +46,7 @@ RSpec.describe Lat::LexerJp do
   end
 
   it 'fetches charset' do
-    expect(Lat::LexerJp.new.charset).to eql('utf-8')
+    expect(lexer.charset).to eql('utf-8')
   end
 
   it 'handles euc-jp ipadic' do
@@ -50,5 +54,27 @@ RSpec.describe Lat::LexerJp do
     l = Lat::LexerJp.new
     l.charset = 'euc-jp'
     expect(l.decode(s)).to eql('記号,一般,*,*,*,*,*')
+  end
+
+  TESTS = [
+    [
+      '現在 全ての通常回線は 不通となっております',
+      ' 現[げん] 在[ざい]  全[すべ]ての 通[つう] 常[じょう] 回[かい] 線[せん]は  不[ふ] 通[つう]となっております'
+    ],
+    [
+      'お揃いの バッシュの紐もうれしかったし。',
+      'お 揃[そろ]いの バッシュの 紐[ひも]もうれしかったし。'
+    ],
+    [
+      '走り始めたら　俺は多分、自分の闘争心を抑えられないだろう',
+      ' 走[はし]り 始[はじ]めたら　 俺[おれ]は 多[た] 分[ぶん]、 自[じ] 分[ぶん]の 闘[とう] 争[そう] 心[しん]を 抑[おさ]えられないだろう'
+    ]
+  ].freeze
+
+  TESTS.each do |t|
+    it "converts to furigana preserving whitespace #{t.first} => #{t.second}" do
+      x = lexer.to_text(lexer.call(t.first))
+      expect(x).to eql(t.second)
+    end
   end
 end

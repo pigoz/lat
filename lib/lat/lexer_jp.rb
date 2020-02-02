@@ -8,6 +8,10 @@ module Lat
     attr_accessor :charset
     attr_reader :mecab
 
+    def to_text(results)
+      results.map(&:to_text).join
+    end
+
     def initialize
       @mecab = Natto::MeCab.new(mecab_options)
       @charset = detect_charset
@@ -19,7 +23,7 @@ module Lat
 
     KEYS = %i[g1 g2 x1 x2 x3 x4 lemma reading1 reading2].freeze
 
-    Result = Struct.new(*KEYS, :text, keyword_init: true)
+    Result = S.new(*KEYS, :surface, :surface_len, :surface_rlen)
 
     class Result
       QUERIES = {
@@ -43,6 +47,15 @@ module Lat
 
       def reading
         (reading1 || reading2)&.hiragana
+      end
+
+      def leading_whitespace
+        ' ' * (surface_rlen - surface_len)
+      end
+
+      def to_text
+        text = Lat::Furigana.new.call(text: surface, reading: reading)
+        "#{leading_whitespace}#{text}"
       end
     end
 
@@ -74,7 +87,12 @@ module Lat
       split = decode(result.feature).split(',')
       split = split.map { |x| x == '*' ? nil : x }
       feature = Hash[KEYS.zip(split.flatten)]
-      Result.new(feature.merge(text: decode(result.surface)))
+      surface = {
+        surface: decode(result.surface),
+        surface_len: result.length,
+        surface_rlen: result.rlength
+      }
+      Result.new(feature.merge(surface))
     end
   end
 end
