@@ -10,7 +10,9 @@ module Lat
     end
 
     def to_definitions(results)
-      results.flat_map(&:to_definition).compact
+      Lat::Dict.class # autoloads
+      require 'parallel'
+      Parallel.flat_map(results, &:to_definition).compact
     end
 
     def initialize
