@@ -9,7 +9,13 @@ module Lat
       results.map(&:to_text).join
     end
 
+    def to_definitions(results)
+      results.flat_map(&:to_definition).compact
+    end
+
     def initialize
+      require 'natto'
+      require 'mojinizer'
       @mecab = Natto::MeCab.new(mecab_options)
       @charset = detect_charset
     end
@@ -34,16 +40,20 @@ module Lat
 
     class Result
       QUERIES = {
+        nsuf: %w[名詞 接尾],
         noun: %w[名詞],
+        vconj: %w[動詞 接尾],
         verb: %w[動詞],
         particle: %w[助詞],
         punctuation: %w[記号],
+        conj: %w[助動詞],
+        pref: %w[接頭詞 名詞接続],
         eos: %w[BOS/EOS]
       }.freeze
 
       QUERIES.each do |k, v|
         define_method :"#{k}?" do
-          g1 == v.first
+          v.first == g1 && (v.second ? v.second == g2 : true)
         end
       end
 
@@ -66,6 +76,15 @@ module Lat
         else
           Lat::Furigana.new.call(text: surface, reading: reading)
         end
+      end
+
+      def to_definition
+        return nil if Blacklist.default.blacklisted?(lemma)
+        if grammar.in?(%i[particle eos punctuation conj vconj pref nsuf])
+          return nil
+        end
+
+        Lat::Dict.new.call(lemma: lemma || surface)
       end
 
       def to_text

@@ -60,17 +60,20 @@ RSpec.describe Lat::Lexer do
     [
       '現在 全ての通常回線は 不通となっております',
       ' 現[げん] 在[ざい]  全[すべ]ての 通[つう] 常[じょう] 回[かい] 線[せん]は  不[ふ] 通[つう]となっております',
-      '現在 全ての 通[つう] 常[じょう] 回[かい] 線[せん]は  不[ふ] 通[つう]となっております'
+      '現在 全ての 通[つう] 常[じょう] 回[かい] 線[せん]は  不[ふ] 通[つう]となっております',
+      '通常|回線|不通'
     ],
     [
       'お揃いの バッシュの紐もうれしかったし。',
       'お 揃[そろ]いの バッシュの 紐[ひも]もうれしかったし。',
-      'お揃いの バッシュの 紐[ひも]もうれしかったし。'
+      'お揃いの バッシュの 紐[ひも]もうれしかったし。',
+      'バッシュ|紐'
     ],
     [
       '走り始めたら　俺は多分、自分の闘争心を抑えられないだろう',
       ' 走[はし]り 始[はじ]めたら　 俺[おれ]は 多[た] 分[ぶん]、 自[じ] 分[ぶん]の 闘[とう] 争[そう] 心[しん]を 抑[おさ]えられないだろう',
-      '走り始めたら　俺は多分、自分の 闘[とう] 争[そう] 心[しん]を 抑[おさ]えられないだろう'
+      '走り始めたら　俺は多分、自分の 闘[とう] 争[そう] 心[しん]を 抑[おさ]えられないだろう',
+      '闘争|抑える'
     ]
   ].freeze
 
@@ -86,6 +89,13 @@ RSpec.describe Lat::Lexer do
       Lat::Blacklist.default = Lat::FileBlacklist.new(path)
       x = lexer.to_text(lexer.call(t.first))
       expect(x).to eql(t.third)
+    end
+
+    it "looks up lemmas into dictionary (fbl) #{t.first}" do
+      path = File.expand_path('./blacklist.txt', __dir__)
+      Lat::Blacklist.default = Lat::FileBlacklist.new(path)
+      x = lexer.to_definitions(lexer.call(t.first)).map(&:lemma).join('|')
+      expect(x).to eql(t.fourth)
     end
   end
 end
