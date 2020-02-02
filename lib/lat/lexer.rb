@@ -18,6 +18,16 @@ module Lat
       @mecab.enum_parse(text).to_a.map { |r| parse_result(r) }
     end
 
+    def decode(string)
+      return string if charset == 'utf-8'
+
+      require 'iconv'
+      string = string.dup.force_encoding(charset)
+      Iconv.conv('utf-8', charset, string)
+    end
+
+    private
+
     KEYS = %i[g1 g2 x1 x2 x3 x4 lemma reading1 reading2].freeze
 
     Result = S.new(*KEYS, :surface, :surface_len, :surface_rlen)
@@ -62,16 +72,6 @@ module Lat
         "#{leading_whitespace}#{surface_with_furigana}"
       end
     end
-
-    def decode(string)
-      return string if charset == 'utf-8'
-
-      require 'iconv'
-      string = string.dup.force_encoding(charset)
-      Iconv.conv('utf-8', charset, string)
-    end
-
-    private
 
     def detect_charset
       charsets = mecab.dicts.map(&:charset).uniq
