@@ -53,9 +53,16 @@ module Lat
         ' ' * (surface_rlen - surface_len)
       end
 
+      def surface_with_furigana
+        if Blacklist.default.blacklisted?(lemma)
+          surface
+        else
+          Lat::Furigana.new.call(text: surface, reading: reading)
+        end
+      end
+
       def to_text
-        text = Lat::Furigana.new.call(text: surface, reading: reading)
-        "#{leading_whitespace}#{text}"
+        "#{leading_whitespace}#{surface_with_furigana}"
       end
     end
 
