@@ -11,8 +11,10 @@ module Lat
     def initialize(user_args: [], klass: MPV::Client)
       @mpv = klass.new(user_args: user_args)
       @mpv.callbacks << method(:observe_callback)
+      @mpv.callbacks << method(:message_callback)
       @id = 1_337
       @observers = {}
+      @messages = {}
     end
 
     def loadfile(path:, options:)
@@ -31,7 +33,11 @@ module Lat
       mpv.command('observe_property', id, property)
     end
 
-    delegate :quit!, :get_property, :set_property, to: :mpv
+    def register_message_handler(message, &block)
+      @messages[message] = block
+    end
+
+    delegate :quit!, :command, :get_property, :set_property, to: :mpv
 
     private
 
@@ -49,6 +55,16 @@ module Lat
         )
 
       @observers.fetch(data.id).call(data)
+    end
+
+    def message_callback(raw_data)
+      event = raw_data.fetch('event')
+      return unless event == 'client-message'
+
+      message = raw_data.fetch('args').first
+      return unless message.present?
+
+      @messages.fetch(message).call
     end
 
     class Wait
