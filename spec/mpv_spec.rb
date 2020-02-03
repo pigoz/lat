@@ -13,6 +13,14 @@ RSpec.describe Lat do
 
   after(:all) { @mpv&.quit! }
 
+  it 'can observe properties' do
+    args = []
+    block = proc { |a| args << a }
+    @mpv.wait('property-change') { @mpv.observe_property(:volume, &block) }
+    @mpv.wait('property-change') { @mpv.set_property(:volume, 10) }
+    expect(args.map(&:data)).to eql([100.0, 10.0])
+  end
+
   it 'calls into mpv' do
     expect(@mpv.get_property(:"sub-text")).to eql(
       '何でみんなダメ金なんかで喜べるの'
