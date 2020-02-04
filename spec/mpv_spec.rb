@@ -39,6 +39,12 @@ RSpec.describe Lat::Mpv do
     expect(calls).to eql(2)
   end
 
+  it 'can can release runloop lock' do
+    mpv = Lat::Mpv.test_instance
+    Thread.new { mpv.quit! }
+    mpv.runloop
+  end
+
   it 'calls into mpv' do
     expect(@mpv.get_property(:"sub-text")).to eql(
       '何でみんなダメ金なんかで喜べるの'

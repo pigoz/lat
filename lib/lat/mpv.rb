@@ -1,15 +1,21 @@
 # frozen_string_literal: true
 
+require 'mpv'
+
 module Lat
   class Mpv
     attr_reader :mpv
 
     def self.test_instance
-      new(user_args: %w[--no-config], klass: MPV::Session)
+      new(MPV::Session.new(user_args: %w[--no-config]))
     end
 
-    def initialize(user_args: [], klass: MPV::Client)
-      @mpv = klass.new(user_args: user_args)
+    def self.client
+      new(MPV::Client.new('/tmp/mpv-socket'))
+    end
+
+    def initialize(mpv)
+      @mpv = mpv
       @mpv.callbacks << method(:observe_callback)
       @mpv.callbacks << method(:message_callback)
       @id = 1_337
@@ -21,6 +27,14 @@ module Lat
       f = fence('playback-restart')
       mpv.command('loadfile', path, 'replace', options)
       f.wait
+    end
+
+    def runloop
+      require 'thwait'
+      client = mpv.respond_to?(:client) ? mpv.client : mpv
+      thnames = %w[@command_thread @results_thread @events_thread]
+      threads = thnames.map { |iv| client.instance_variable_get(iv) }
+      ThreadsWait.new(*threads).join
     end
 
     def fence(event)
@@ -35,6 +49,16 @@ module Lat
 
     def register_message_handler(message, &block)
       @messages[message] = block
+    end
+
+    def message(message)
+      style = { fs: 14, bord: 1, '1c': '&HFFFFFF&', '3c': '&H000000&' }
+      style = style.map { |k, v| "{\\#{k}#{v}}" }.join
+      @mpv.command('osd-overlay', 0, 'ass-events', [style, message].join)
+    end
+
+    def clear_message
+      @mpv.command('osd-overlay', 0, 'none')
     end
 
     delegate :quit!, :command, :get_property, :set_property, to: :mpv
