@@ -18,13 +18,13 @@ module Lat
     end
 
     def loadfile(path:, options:)
-      Wait.new(mpv, 'playback-restart').call do
-        mpv.command('loadfile', path, 'replace', options)
-      end
+      f = fence('playback-restart')
+      mpv.command('loadfile', path, 'replace', options)
+      f.wait
     end
 
-    def wait(event, &block)
-      Wait.new(mpv, event).call(&block)
+    def fence(event)
+      Fence.new(mpv) { |d| d.fetch('event') == event }
     end
 
     def observe_property(property, &block)
@@ -67,24 +67,24 @@ module Lat
       @messages.fetch(message).call
     end
 
-    class Wait
-      def initialize(mpv, event_name)
+    class Fence
+      def initialize(mpv, &block)
         @mpv = mpv
-        @event_name = event_name
         @mutex = Mutex.new
         @resource = ConditionVariable.new
+        @block = block
       end
 
-      def call(&block)
+      def wait
         @mpv.callbacks << method(:callback)
-        block.call if block_given?
         @mutex.synchronize { @resource.wait(@mutex) }
-        @mpv.callbacks.delete(method(:callback))
       end
 
       def callback(data)
-        event = data.fetch('event')
-        @mutex.synchronize { @resource.signal } if event == @event_name
+        return unless @block.call(data)
+
+        @mutex.synchronize { @resource.signal }
+        @mpv.callbacks.delete(method(:callback))
       end
     end
   end

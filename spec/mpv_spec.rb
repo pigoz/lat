@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Lat do
+RSpec.describe Lat::Mpv do
   before(:all) do
     skip unless MPV::Server.available?
     @mpv = Lat::Mpv.test_instance
@@ -16,21 +16,26 @@ RSpec.describe Lat do
   it 'can observe properties' do
     args = []
     block = proc { |a| args << a }
-    @mpv.wait('property-change') { @mpv.observe_property(:volume, &block) }
-    @mpv.wait('property-change') { @mpv.set_property(:volume, 10) }
+    fence = @mpv.fence('property-change')
+    @mpv.observe_property(:volume, &block)
+    @mpv.set_property(:volume, 10)
+    fence.wait
     expect(args.map(&:data)).to eql([100.0, 10.0])
   end
 
   it 'can handle client-messages' do
     calls = 0
     block = proc { calls += 1 }
-    e = 'client-message'
     m = 'lat/test_message'
 
+    fence = @mpv.fence('client-message')
     @mpv.register_message_handler(m, &block)
-    @mpv.wait(e) { @mpv.command('script-message', m) }
+    @mpv.command('script-message', m)
+    fence.wait
     expect(calls).to eql(1)
-    @mpv.wait(e) { @mpv.command('script-message', m) }
+
+    @mpv.command('script-message', m)
+    fence.wait
     expect(calls).to eql(2)
   end
 
