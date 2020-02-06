@@ -12,7 +12,7 @@ module Lat
     def to_definitions(results)
       Lat::Dict.class # autoloads
       require 'parallel'
-      Parallel.flat_map(results, &:to_definition).compact
+      Parallel.map(results, &:to_definition).compact
     end
 
     def initialize
@@ -81,12 +81,15 @@ module Lat
       end
 
       def to_definition
-        return nil if Blacklist.default.blacklisted?(lemma)
-        if grammar.in?(%i[particle eos punctuation conj vconj pref nsuf])
-          return nil
-        end
+        l = lemma || surface
+        return nil if Blacklist.default.blacklisted?(l)
+        return nil unless l.present?
+        return nil if l.chars.all?(&:hiragana?)
+        return nil if grammar.in?(%i[particle eos punctuation conj vconj])
 
-        Lat::Dict.new.call(lemma: lemma || surface)
+        Lat::Dict.new.call(lemma: l).select do |x|
+          x.lemma == l || x.reading == reading
+        end.first
       end
 
       def to_text
