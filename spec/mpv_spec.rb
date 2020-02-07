@@ -59,6 +59,10 @@ RSpec.describe Lat::Mpv do
     expect(args.map(&:key)).to eql(%w[c])
   end
 
+  it 'can get client_name' do
+    expect(@mpv.client_name).to match('ipc_')
+  end
+
   it 'calls into mpv' do
     expect(@mpv.get_property(:"sub-text")).to eql(
       '何でみんなダメ金なんかで喜べるの'

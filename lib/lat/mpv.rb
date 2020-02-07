@@ -23,6 +23,10 @@ module Lat
       @messages = {}
     end
 
+    def client_name
+      @client_name ||= @mpv.command('client_name').fetch('data')
+    end
+
     def loadfile(path:, options:)
       f = fence('playback-restart')
       mpv.command('loadfile', path, 'replace', options)
