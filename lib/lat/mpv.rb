@@ -135,7 +135,7 @@ module Lat
         @block = block
       end
 
-      def wait(timeout: nil)
+      def wait(timeout: 0.5)
         @mpv.callbacks << method(:callback)
         @mutex.synchronize { @resource.wait(@mutex, timeout) }
       end

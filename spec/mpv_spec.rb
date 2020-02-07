@@ -55,7 +55,7 @@ RSpec.describe Lat::Mpv do
 
     @mpv.unregister_keybindings(section)
     later { @mpv.command('keypress', 'b') }
-    fence.wait(timeout: 0.5)
+    fence.wait
     expect(args.map(&:key)).to eql(%w[c])
   end
 
