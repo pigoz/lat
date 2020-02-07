@@ -51,6 +51,10 @@ module Lat
       @messages[message] = block
     end
 
+    def unregister_message_handler(message, &block)
+      @messages[message] = block
+    end
+
     def message(message)
       style = { fs: 14, bord: 1, '1c': '&HFFFFFF&', '3c': '&H000000&' }
       style = style.map { |k, v| "{\\#{k}#{v}}" }.join
@@ -58,7 +62,39 @@ module Lat
     end
 
     def clear_message
-      @mpv.command('osd-overlay', 0, 'none')
+      @mpv.command('osd-overlay', 0, 'none', '')
+    end
+
+    Event = S.new(:key, :section)
+
+    def register_keybindings(keys, flags: 'default', &block)
+      section = ('a'..'z').to_a.sample(8).join
+      register_message_handler(section) do |k, s|
+        block.call(Event.new(key: k, section: s))
+      end
+      contents =
+        keys.map { |k| [k, 'script-message', section, k, section].join(' ') }
+      command('define-section', section, contents.join("\n"), flags)
+      command('enable-section', section)
+      section
+    end
+
+    def unregister_keybindings(section)
+      command('disable-section', section)
+      command('define-section', section, '')
+      unregister_message_handler(section)
+    end
+
+    def enter_modal_mode(message:, keys:, &block)
+      quitter = 'ESC'
+      message(message)
+      register_keybindings(keys + [quitter], flags: :force) do |event|
+        clear_message
+        unregister_keybindings(event.section)
+        next if event.key == quitter
+
+        block.call(event) if block_given?
+      end
     end
 
     delegate :quit!, :command, :get_property, :set_property, to: :mpv
@@ -85,10 +121,10 @@ module Lat
       event = raw_data.fetch('event')
       return unless event == 'client-message'
 
-      message = raw_data.fetch('args').first
+      message, *args = raw_data.fetch('args')
       return unless message.present?
 
-      @messages.fetch(message).call
+      @messages.fetch(message).call(*args)
     end
 
     class Fence
@@ -99,9 +135,9 @@ module Lat
         @block = block
       end
 
-      def wait
+      def wait(timeout: nil)
         @mpv.callbacks << method(:callback)
-        @mutex.synchronize { @resource.wait(@mutex) }
+        @mutex.synchronize { @resource.wait(@mutex, timeout) }
       end
 
       def callback(data)

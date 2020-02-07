@@ -5,8 +5,17 @@ module Lat
     end
 
     def run
-      @mpv.observe_property('sub-text', &method(:sub_text_changed))
+      # @mpv.observe_property('sub-text', &method(:sub_text_changed))
+      @mpv.enter_modal_mode(
+        message: 'how many contiguous subs? [1..9]',
+        keys: (1..9).to_a.map(&:to_s),
+        &method(:modal_handler)
+      )
       @mpv.runloop
+    end
+
+    def modal_handler(event)
+      puts event.inspect
     end
 
     def sub_text_changed(event)

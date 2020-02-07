@@ -13,6 +13,10 @@ RSpec.describe Lat::Mpv do
 
   after(:all) { @mpv&.quit! }
 
+  def later(&block)
+    Thread.new { block.call }
+  end
+
   it 'can observe properties' do
     args = []
     block = proc { |a| args << a }
@@ -30,24 +34,40 @@ RSpec.describe Lat::Mpv do
 
     fence = @mpv.fence('client-message')
     @mpv.register_message_handler(m, &block)
-    @mpv.command('script-message', m)
+    later { @mpv.command('script-message', m) }
     fence.wait
     expect(calls).to eql(1)
 
-    @mpv.command('script-message', m)
+    later { @mpv.command('script-message', m) }
     fence.wait
     expect(calls).to eql(2)
   end
 
-  it 'can can release runloop lock' do
-    mpv = Lat::Mpv.test_instance
-    Thread.new { mpv.quit! }
-    mpv.runloop
+  it 'can register a binding' do
+    args = []
+    block = proc { |a| args << a }
+    fence = @mpv.fence('client-message')
+    section = @mpv.register_keybindings(%w[b c d], &block)
+    later { @mpv.command('keypress', 'g') }
+    later { @mpv.command('keypress', 'c') }
+    fence.wait
+    expect(args.map(&:key)).to eql(%w[c])
+
+    @mpv.unregister_keybindings(section)
+    later { @mpv.command('keypress', 'b') }
+    fence.wait(timeout: 0.5)
+    expect(args.map(&:key)).to eql(%w[c])
   end
 
   it 'calls into mpv' do
     expect(@mpv.get_property(:"sub-text")).to eql(
       '何でみんなダメ金なんかで喜べるの'
     )
+  end
+
+  it 'can release runloop lock' do
+    mpv = Lat::Mpv.test_instance
+    later { mpv.quit! }
+    mpv.runloop
   end
 end
