@@ -13,50 +13,71 @@ RSpec.describe Lat::Mpv do
 
   after(:all) { @mpv&.quit! }
 
-  def later(&block)
-    Thread.new { block.call }
+  class Spy
+    def initialize
+      @mutex = Mutex.new
+      @resource = ConditionVariable.new
+      clear
+    end
+
+    def clear
+      @queue = []
+      @runs = 0
+    end
+
+    def to_proc
+      proc do |*args|
+        @mutex.synchronize do
+          @queue << args
+          @runs += 1
+          @resource.signal
+        end
+      end
+    end
+
+    DEFAULT_TIMEOUT = 0.3
+
+    def wait(runs: 1, timeout: DEFAULT_TIMEOUT)
+      @mutex.synchronize do
+        (runs - @runs).times { @resource.wait(@mutex, timeout) }
+      end
+      @queue
+    end
+
+    def runs(timeout: DEFAULT_TIMEOUT)
+      @mutex.synchronize { @resource.wait(@mutex, timeout) }
+      @runs
+    end
   end
 
   it 'can observe properties' do
-    args = []
-    block = proc { |a| args << a }
-    fence = @mpv.fence('property-change')
-    @mpv.observe_property(:volume, &block)
+    spy = Spy.new
+    @mpv.observe_property(:volume, &spy)
     @mpv.set_property(:volume, 10)
-    fence.wait
-    expect(args.map(&:data)).to eql([100.0, 10.0])
+    result = spy.wait(runs: 2)
+    expect(result.map(&:first).map(&:data)).to eql([100.0, 10.0])
   end
 
   it 'can handle client-messages' do
-    calls = 0
-    block = proc { calls += 1 }
+    spy = Spy.new
     m = 'lat/test_message'
-
-    fence = @mpv.fence('client-message')
-    @mpv.register_message_handler(m, &block)
-    later { @mpv.command('script-message', m) }
-    fence.wait
-    expect(calls).to eql(1)
-
-    later { @mpv.command('script-message', m) }
-    fence.wait
-    expect(calls).to eql(2)
+    @mpv.register_message_handler(m, &spy)
+    @mpv.command('script-message', m, 'a', 'b')
+    @mpv.command('script-message', m, 'c', 'd')
+    result = spy.wait(runs: 2)
+    expect(result).to eql([%w[a b], %w[c d]])
   end
 
   it 'can register a binding' do
-    args = []
-    block = proc { |a| args << a }
-    fence = @mpv.fence('client-message')
-    section = @mpv.register_keybindings(%w[b c d], &block)
-    later { @mpv.command('keypress', 'g') }
-    later { @mpv.command('keypress', 'c') }
-    fence.wait
-    expect(args.map(&:key)).to eql(%w[c])
+    spy = Spy.new
+    section = @mpv.register_keybindings(%w[b c d], &spy)
+    @mpv.command('keypress', 'g')
+    @mpv.command('keypress', 'c')
+    expect(spy.wait.map(&:first).map(&:key)).to eql(%w[c])
 
     @mpv.unregister_keybindings(section)
-    later { @mpv.command('keypress', 'b') }
-    fence.wait
-    expect(args.map(&:key)).to eql(%w[c])
+    @mpv.command('keypress', 'b')
+    expect(spy.runs).to eql(1)
   end
 
   it 'can get client_name' do
@@ -71,7 +92,7 @@ RSpec.describe Lat::Mpv do
 
   it 'can release runloop lock' do
     mpv = Lat::Mpv.test_instance
-    later { mpv.quit! }
+    Thread.new { mpv.quit! }
     mpv.runloop
   end
 end

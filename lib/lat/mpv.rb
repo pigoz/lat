@@ -55,8 +55,8 @@ module Lat
       @messages[message] = block
     end
 
-    def unregister_message_handler(message, &block)
-      @messages[message] = block
+    def unregister_message_handler(message)
+      @messages.delete(message)
     end
 
     def message(message)
@@ -69,15 +69,11 @@ module Lat
       @mpv.command('osd-overlay', 0, 'none', '')
     end
 
-    Event = S.new(:key, :section)
-
     def register_keybindings(keys, flags: 'default', &block)
       section = ('a'..'z').to_a.sample(8).join
-      register_message_handler(section) do |k, s|
-        block.call(Event.new(key: k, section: s))
-      end
-      contents =
-        keys.map { |k| [k, 'script-message', section, k, section].join(' ') }
+      namespaced_section = [client_name, section].join('/')
+      register_message_handler(section, &block)
+      contents = keys.map { |k| "#{k} script-binding #{namespaced_section}" }
       command('define-section', section, contents.join("\n"), flags)
       command('enable-section', section)
       section
@@ -121,14 +117,25 @@ module Lat
       @observers.fetch(data.id).call(data)
     end
 
+    Event = Struct.new(:section, :state, :key, :key2)
+
     def message_callback(raw_data)
       event = raw_data.fetch('event')
       return unless event == 'client-message'
 
-      message, *args = raw_data.fetch('args')
+      message, *args = parse_message_arguments(raw_data.fetch('args'))
       return unless message.present?
 
       @messages.fetch(message).call(*args)
+    end
+
+    def parse_message_arguments(raw_args)
+      if raw_args.first == 'key-binding'
+        e = Event.new(*raw_args.drop(1))
+        [e.section, e]
+      else
+        raw_args
+      end
     end
 
     class Fence
