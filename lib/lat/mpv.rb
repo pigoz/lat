@@ -133,20 +133,15 @@ module Lat
       event = raw_data.fetch('event')
       return unless event == 'client-message'
 
-      message, *args = parse_message_arguments(raw_data.fetch('args'))
+      message, *args = raw_data.fetch('args')
       return unless message.present?
+
+      if message == 'key-binding'
+        message, *args = [args.first, KeyEvent.new(*args.drop(1))]
+      end
 
       @messages.fetch(message).call(*args)
       signal(event, *args)
-    end
-
-    def parse_message_arguments(raw_args)
-      if raw_args.first == 'key-binding'
-        e = KeyEvent.new(*raw_args.drop(1))
-        [e.section, e]
-      else
-        raw_args
-      end
     end
 
     def playback_restart_callback(raw_data)
