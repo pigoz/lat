@@ -4,23 +4,24 @@ require 'mpv'
 
 module Lat
   class Mpv
-    attr_reader :mpv
+    attr_reader :mpv, :overlay
 
-    def self.test_instance
-      new(MPV::Session.new(user_args: %w[--no-config]))
+    def self.test_instance(**args)
+      new(MPV::Session.new(user_args: %w[--no-config]), **args)
     end
 
     def self.client
       new(MPV::Client.new('/tmp/mpv-socket'))
     end
 
-    def initialize(mpv)
+    def initialize(mpv, spy: nil)
       @mpv = mpv
       @mpv.callbacks << method(:observe_callback)
       @mpv.callbacks << method(:message_callback)
       @id = 1_337
       @observers = {}
       @messages = {}
+      @spy = spy
     end
 
     def client_name
@@ -28,9 +29,12 @@ module Lat
     end
 
     def loadfile(path:, options:)
-      f = fence('playback-restart')
+      lspy = Spy.new { |e| e.fetch('event') == 'playback-restart' }
+      callback = lspy.to_proc
+      @mpv.callbacks << callback
       mpv.command('loadfile', path, 'replace', options)
-      f.wait
+      lspy.wait
+      @mpv.callbacks.delete(callback)
     end
 
     def runloop
@@ -41,14 +45,15 @@ module Lat
       ThreadsWait.new(*threads).join
     end
 
-    def fence(event)
-      Fence.new(mpv) { |d| d.fetch('event') == event }
-    end
-
     def observe_property(property, &block)
       id = (@id += 1)
       @observers[id] = block
       mpv.command('observe_property', id, property)
+      id
+    end
+
+    def unobserve_property(id)
+      mpv.command('unobserve_property', id)
     end
 
     def register_message_handler(message, &block)
@@ -59,18 +64,22 @@ module Lat
       @messages.delete(message)
     end
 
+    OverlayState = S.new(:style, :message)
+
     def message(message)
-      style = { fs: 14, bord: 1, '1c': '&HFFFFFF&', '3c': '&H000000&' }
+      style = { fs: 24, bord: 1, '1c': '&HFFFFFF&', '3c': '&H000000&' }
       style = style.map { |k, v| "{\\#{k}#{v}}" }.join
+      @overlay = OverlayState.new(style: style, message: message)
       @mpv.command('osd-overlay', 0, 'ass-events', [style, message].join)
     end
 
     def clear_message
+      @overlay = nil
       @mpv.command('osd-overlay', 0, 'none', '')
     end
 
-    def register_keybindings(keys, flags: 'default', &block)
-      section = ('a'..'z').to_a.sample(8).join
+    def register_keybindings(keys, section: nil, flags: 'default', &block)
+      section ||= ('a'..'z').to_a.sample(8).join
       namespaced_section = [client_name, section].join('/')
       register_message_handler(section, &block)
       contents = keys.map { |k| "#{k} script-binding #{namespaced_section}" }
@@ -115,9 +124,10 @@ module Lat
         )
 
       @observers.fetch(data.id).call(data)
+      signal(event, data)
     end
 
-    Event = Struct.new(:section, :state, :key, :key2)
+    KeyEvent = Struct.new(:section, :state, :key, :key2)
 
     def message_callback(raw_data)
       event = raw_data.fetch('event')
@@ -127,36 +137,27 @@ module Lat
       return unless message.present?
 
       @messages.fetch(message).call(*args)
+      signal(event, *args)
     end
 
     def parse_message_arguments(raw_args)
       if raw_args.first == 'key-binding'
-        e = Event.new(*raw_args.drop(1))
+        e = KeyEvent.new(*raw_args.drop(1))
         [e.section, e]
       else
         raw_args
       end
     end
 
-    class Fence
-      def initialize(mpv, &block)
-        @mpv = mpv
-        @mutex = Mutex.new
-        @resource = ConditionVariable.new
-        @block = block
-      end
+    def playback_restart_callback(raw_data)
+      event = raw_data.fetch('event')
+      return unless event == 'playback-restart'
 
-      def wait(timeout: 0.5)
-        @mpv.callbacks << method(:callback)
-        @mutex.synchronize { @resource.wait(@mutex, timeout) }
-      end
+      signal(event)
+    end
 
-      def callback(data)
-        return unless @block.call(data)
-
-        @mutex.synchronize { @resource.signal }
-        @mpv.callbacks.delete(method(:callback))
-      end
+    def signal(*args)
+      @spy&.to_proc&.call(*args)
     end
   end
 end

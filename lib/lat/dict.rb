@@ -12,6 +12,12 @@ module Lat
         keyword_init: true
       )
 
+    class Result
+      def to_repr
+        [lemma, "(#{reading})", '-', definition].join(' ')
+      end
+    end
+
     def call(lemma:)
       results = `myougiden --color=no -t #{lemma}`.strip.split("\n")
       results.map { |result| build_result(result, lemma) }
