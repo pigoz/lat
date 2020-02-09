@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+require_relative './fixtures/hibike'
+
 RSpec.describe Lat::MpvScript do
   before(:all) do
     skip unless MPV::Server.available?
     @spy = Lat::Spy.new
     @mpv = Lat::Mpv.test_instance(spy: @spy)
-    @script = Lat::MpvScript.new(@mpv)
+    @script = Lat::MpvScript.new(@mpv, sub2srsklass: Lat::Sub2srs::NoOp)
     path = File.expand_path('./blacklist.txt', __dir__)
     Lat::Blacklist.default = Lat::FileBlacklist.new(path)
     path = File.expand_path('./fixtures/hibike.mkv', __dir__)
@@ -43,7 +45,32 @@ RSpec.describe Lat::MpvScript do
     )
   end
 
+  it 'exports stuff to anki' do
+    @mpv.command(:keypress, 'b')
+    wait_keydown('b')
+    @mpv.command(:keypress, '1')
+    wait_keydown('1')
+
+    data = @script.sub2srs.data
+    expect(data).to eql([HIBIKE1])
+  end
+
+  it 'exports stuff to anki [adj]' do
+    @spy.clear!
+    @mpv.command(:keypress, 'b')
+    wait_keydown('b')
+    @mpv.command(:keypress, '2')
+    wait_observe_property('sub-text')
+    wait_keydown('2')
+
+    data = @script.sub2srs.data
+    expect(data).to eql([HIBIKE1, HIBIKE2])
+  end
+
   it 'toggles jplookup off' do
+    @spy.clear!
+    @mpv.command(:keypress, 'l')
+    wait_keydown('l')
     @mpv.command(:keypress, 'l')
     wait_keydown('l')
     expect(@script.jplookup_active?).to be false

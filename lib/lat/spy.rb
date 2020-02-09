@@ -12,16 +12,18 @@ module Lat
       @runs = 0
     end
 
-    def to_proc
-      proc do |*args|
-        @mutex.synchronize do
-          next if @condition&.call(*args)
+    def notify(*args)
+      @mutex.synchronize do
+        next if @condition&.call(*args)
 
-          @queue << args
-          @runs += 1
-          @resource.signal
-        end
+        @queue << args
+        @runs += 1
+        @resource.signal
       end
+    end
+
+    def to_proc
+      method(:notify).to_proc
     end
 
     DEFAULT_TIMEOUT = 5
