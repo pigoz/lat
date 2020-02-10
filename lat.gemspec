@@ -37,4 +37,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'mpv'
   spec.add_dependency 'natto'
   spec.add_dependency 'parallel'
+  spec.add_dependency 'rest-client'
 end

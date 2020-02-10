@@ -7,4 +7,4 @@ require 'lat'
 
 path = File.expand_path('./../spec/blacklist.txt', __dir__)
 Lat::Blacklist.default = Lat::FileBlacklist.new(path)
-Lat::MpvScript.new(Lat::Mpv.client).run
+Lat::MpvScript.new(Lat::Mpv.client).runloop

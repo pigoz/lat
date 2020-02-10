@@ -16,6 +16,10 @@ module Lat
       def to_repr
         [lemma, "(#{reading})", '-', definition].join(' ')
       end
+
+      def to_repr_furigana
+        [Furigana.new.call(text: lemma, reading: reading), definition].join(' ')
+      end
     end
 
     def call(lemma:)

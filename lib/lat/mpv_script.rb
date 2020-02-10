@@ -43,7 +43,13 @@ module Lat
         end
 
       @sub2srs = @sub2srsklass.new(data)
-      @sub2srs.call
+      ok, line = @sub2srs.call
+
+      if ok
+        @mpv.message("exported: #{line}")
+      else
+        @mpv.message("error exporting: #{line}")
+      end
     end
 
     def build_sub_data
@@ -52,8 +58,8 @@ module Lat
         aid: @mpv.get_property('aid'),
         title: @mpv.get_property('media-title'),
         text: @mpv.get_property('sub-text'),
-        start: @mpv.get_property('sub-start'),
-        end: @mpv.get_property('sub-end')
+        sub_start: @mpv.get_property('sub-start'),
+        sub_end: @mpv.get_property('sub-end')
       )
     end
 
