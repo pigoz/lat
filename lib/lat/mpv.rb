@@ -67,15 +67,15 @@ module Lat
     OverlayState = S.new(:style, :message)
 
     def message(message)
-      style = { fs: 24, bord: 1, '1c': '&HFFFFFF&', '3c': '&H000000&' }
+      style = { fs: 44, bord: 1, '1c': '&HFFFFFF&', '3c': '&H000000&' }
       style = style.map { |k, v| "{\\#{k}#{v}}" }.join
       @overlay = OverlayState.new(style: style, message: message)
-      @mpv.command('osd-overlay', 0, 'ass-events', [style, message].join)
+      @mpv.command('osd-overlay', 999, 'ass-events', [style, message].join)
     end
 
     def clear_message
       @overlay = nil
-      @mpv.command('osd-overlay', 0, 'none', '')
+      @mpv.command('osd-overlay', 999, 'none', '')
     end
 
     def register_keybindings(keys, section: nil, flags: 'default', &block)
@@ -100,9 +100,8 @@ module Lat
       register_keybindings(keys + [quitter], flags: :force) do |event|
         clear_message
         unregister_keybindings(event.section)
-        next if event.key == quitter
 
-        block.call(event) if block_given?
+        block.call(event) if block_given? && event.key != quitter
       end
     end
 
@@ -123,11 +122,21 @@ module Lat
           property: raw.fetch('name')
         )
 
-      @observers.fetch(data.id).call(data)
+      @observers.fetch(data.id, nil)&.call(data)
       signal(event, data)
     end
 
     KeyEvent = Struct.new(:section, :state, :key, :key2)
+
+    class KeyEvent
+      def keydown?
+        state == 'd-'
+      end
+
+      def keyup?
+        state == 'u-'
+      end
+    end
 
     def message_callback(raw_data)
       event = raw_data.fetch('event')
@@ -137,10 +146,10 @@ module Lat
       return unless message.present?
 
       if message == 'key-binding'
-        message, *args = [args.first, KeyEvent.new(*args.drop(1))]
+        message, *args = [args.first, KeyEvent.new(*args)]
       end
 
-      @messages.fetch(message).call(*args)
+      @messages.fetch(message, nil)&.call(*args)
       signal(event, *args)
     end
 

@@ -20,11 +20,13 @@ module Lat
     end
 
     def sub_text_changed(event)
-      jplookup_text(event.data)
+      jplookup_text(event.data) if jplookup_active?
       @spy.notify(event)
     end
 
-    def sub2srs_n(*)
+    def sub2srs_n(event)
+      return unless event.keydown?
+
       jplookup_off
       @mpv.enter_modal_mode(
         message: 'how many contiguous subs? [1..9]',
@@ -34,6 +36,8 @@ module Lat
     end
 
     def sub2srs_n_handler(event)
+      return unless event.keydown?
+
       count = event.key.to_i
       data =
         (0...count).to_a.reverse.map do |idx|
@@ -41,6 +45,8 @@ module Lat
           seek_and_wait_sub_text if idx.positive?
           el
         end
+
+      @mpv.message('exporting to anki')
 
       @sub2srs = @sub2srsklass.new(data)
       ok, line = @sub2srs.call
@@ -78,13 +84,19 @@ module Lat
       @mpv.clear_message
     end
 
-    def jplookup_toggle(*)
+    def jplookup_toggle(event)
+      return unless event.keydown?
+
       @jplookup = !@jplookup
-      jplookup_text(@mpv.get_property('sub-text'))
+      if jplookup_active?
+        jplookup_text(@mpv.get_property('sub-text'))
+      else
+        @mpv.clear_message
+      end
     end
 
     def jplookup_text(text)
-      if text.present? && jplookup_active?
+      if text.present?
         lexer = Lat::Lexer.new
         lexer_results = lexer.call(text)
         defs = lexer.to_definitions(lexer_results)
