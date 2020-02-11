@@ -67,7 +67,7 @@ module Lat
     OverlayState = S.new(:style, :message)
 
     def message(message)
-      style = { fs: 44, bord: 1, '1c': '&HFFFFFF&', '3c': '&H000000&' }
+      style = { fs: 40, bord: 1, '1c': '&HFFFFFF&', '3c': '&H000000&' }
       style = style.map { |k, v| "{\\#{k}#{v}}" }.join
       @overlay = OverlayState.new(style: style, message: message)
       @mpv.command('osd-overlay', 999, 'ass-events', [style, message].join)

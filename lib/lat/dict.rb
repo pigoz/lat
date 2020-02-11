@@ -14,7 +14,11 @@ module Lat
 
     class Result
       def to_repr
-        [lemma, "(#{reading})", '-', definition].join(' ')
+        if lemma.kanji?
+          [lemma, "(#{reading})", definition].join(' ')
+        else
+          [lemma, definition].join(' ')
+        end
       end
 
       def to_repr_furigana
@@ -36,7 +40,7 @@ module Lat
         dictionary: 'myougiden',
         lemma: first_item(parts.second) || lemma,
         grammar: d.fetch('grammar'),
-        definition: d.fetch('definition'),
+        definition: d.fetch('definition').split('|').take(2).join(' | '),
         reading: first_item(parts.first)
       )
     end

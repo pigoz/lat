@@ -10,7 +10,7 @@ RSpec.describe Lat::Dict do
           dictionary: 'myougiden',
           lemma: '漢字',
           grammar: 'n',
-          definition: 'kanji|Chinese characters (P)',
+          definition: 'kanji | Chinese characters (P)',
           reading: 'かんじ'
         )
       ]
@@ -60,7 +60,7 @@ RSpec.describe Lat::Dict do
           dictionary: 'myougiden',
           lemma: '囁く',
           grammar: 'v5k,vi;uk',
-          definition: 'to whisper|to murmur',
+          definition: 'to whisper | to murmur',
           reading: 'ささやく'
         )
       ]
