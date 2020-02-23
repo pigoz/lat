@@ -12,7 +12,7 @@ module Lat
         section: 'jplookup_toggle',
         &method(:jplookup_toggle)
       )
-      @mpv.register_keybindings(%w[b GAMEPAD_ACTION_UP], &method(:sub2srs_n))
+      @mpv.register_keybindings(%w[b], &method(:sub2srs_n))
     end
 
     def runloop

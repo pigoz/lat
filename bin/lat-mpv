@@ -3,6 +3,8 @@
 
 require 'rubygems'
 require 'bundler/setup'
+
+$LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 require 'lat'
 
 path = File.expand_path('./../spec/blacklist.txt', __dir__)

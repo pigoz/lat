@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'active_support/all'
-ActiveSupport::Dependencies.autoload_paths += %w[lib]
-
 require 'lat/version'
 
 module Lat
@@ -27,3 +25,13 @@ class Array
     first.product(*self[1..-1])
   end
 end
+
+require 'lat/blacklist'
+require 'lat/furigana'
+require 'lat/lexer'
+require 'lat/ffmpeg'
+require 'lat/dict'
+require 'lat/spy'
+require 'lat/sub2srs'
+require 'lat/mpv'
+require 'lat/mpv_script'
