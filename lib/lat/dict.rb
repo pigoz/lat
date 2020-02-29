@@ -14,7 +14,7 @@ module Lat
 
     class Result
       def to_repr
-        if lemma.kanji?
+        if lemma.chars.any?(&:kanji?)
           [lemma, "(#{reading})", definition].join(' ')
         else
           [lemma, definition].join(' ')
