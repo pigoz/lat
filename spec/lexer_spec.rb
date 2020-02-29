@@ -98,6 +98,12 @@ RSpec.describe Lat::Lexer do
       'あの 子[こ] 緊[きん] 張[ちょう]でトイレに 閉[と]じこもってるから',
       'あの子緊張でトイレに 閉[と]じこもってるから',
       'トイレ|閉じこもる'
+    ],
+    [
+      'some text in english',
+      'some text in english',
+      'some text in english',
+      ''
     ]
   ].freeze
 
