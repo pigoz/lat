@@ -1,10 +1,19 @@
+# frozen_string_literal: true
+
 module Lat
   class MpvScript
     attr_reader :sub2srs
 
+    EVENTS = %i[
+      jplookup_toggle
+      enter_modal_mode
+      select_modal_option
+      sub_text_changed
+    ].freeze
+
     def initialize(mpv, sub2srsklass: Sub2srs)
       @mpv = mpv
-      @spy = Spy.new
+      @fence = MPV::Fence.new
       @sub2srsklass = sub2srsklass
       @mpv.observe_property('sub-text', &method(:sub_text_changed))
       @mpv.register_keybindings(
@@ -15,13 +24,25 @@ module Lat
       @mpv.register_keybindings(%w[b], &method(:sub2srs_n))
     end
 
+    def dispatch(event)
+      @fence.to_proc.call(event)
+    end
+
+    def wait_event(event)
+      loop do
+        x = @fence.wait1.first
+        break if event == x
+      end
+    end
+
     def runloop
       @mpv.runloop
     end
 
     def sub_text_changed(event)
+      @subs&.push(event.data) if event.data.present?
       jplookup_text(event.data) if jplookup_active?
-      @spy.notify(event)
+      dispatch(:sub_text_changed)
     end
 
     def sub2srs_n(event)
@@ -29,50 +50,52 @@ module Lat
 
       jplookup_off
       @mpv.enter_modal_mode(
-        message: 'how many contiguous subs? [1..9]',
-        keys: (1..9).to_a.map(&:to_s),
+        'how many contiguous subs? [1..9]',
+        (1..9).to_a.map(&:to_s),
         &method(:sub2srs_n_handler)
       )
+
+      dispatch(:enter_modal_mode)
     end
 
     def sub2srs_n_handler(event)
       return unless event.keydown?
 
       count = event.key.to_i
+      @subs = Queue.new
       data =
         (0...count).to_a.reverse.map do |idx|
           el = build_sub_data
-          seek_and_wait_sub_text if idx.positive?
+          if idx.positive?
+            @mpv.command('sub-seek', 1)
+            @subs.pop
+          end
           el
         end
 
-      @mpv.message('exporting to anki')
+      msgid = @mpv.create_osd_message('exporting to anki')
 
       @sub2srs = @sub2srsklass.new(data)
       ok, line = @sub2srs.call
 
       if ok
-        @mpv.message("exported: #{line}")
+        @mpv.edit_osd_message(msgid, "exported: #{line}")
       else
-        @mpv.message("error exporting: #{line}")
+        @mpv.edit_osd_message(msgid, "error exporting: #{line}")
       end
+
+      dispatch(:select_modal_option)
     end
 
     def build_sub_data
       Sub2srs::Data.new(
-        apath: @mpv.get_property('path'),
-        aid: @mpv.get_property('aid'),
-        title: @mpv.get_property('media-title'),
-        text: @mpv.get_property('sub-text'),
-        sub_start: @mpv.get_property('sub-start'),
-        sub_end: @mpv.get_property('sub-end')
+        apath: @mpv.get_property('path').data,
+        aid: @mpv.get_property('aid').data,
+        title: @mpv.get_property('media-title').data,
+        text: @mpv.get_property('sub-text').data,
+        sub_start: @mpv.get_property('sub-start').data,
+        sub_end: @mpv.get_property('sub-end').data
       )
-    end
-
-    def seek_and_wait_sub_text
-      @spy.clear!
-      @mpv.command('sub-seek', 1)
-      @spy.wait(runs: 2, clear: true)
     end
 
     def jplookup_active?
@@ -81,18 +104,20 @@ module Lat
 
     def jplookup_off
       @jplookup = false
-      @mpv.clear_message
     end
 
     def jplookup_toggle(event)
       return unless event.keydown?
 
       @jplookup = !@jplookup
+
       if jplookup_active?
-        jplookup_text(@mpv.get_property('sub-text'))
+        jplookup_text(@mpv.get_property('sub-text').data)
       else
-        @mpv.clear_message
+        @mpv.clear_osd_messages
       end
+
+      dispatch(:jplookup_toggle)
     end
 
     def jplookup_text(text)
@@ -100,9 +125,9 @@ module Lat
         lexer = Lat::Lexer.new
         lexer_results = lexer.call(text)
         defs = lexer.to_definitions(lexer_results)
-        @mpv.message(defs.map(&:to_repr).join('\\N'))
+        @mpv.create_osd_message(defs.map(&:to_repr).join('\\N'))
       else
-        @mpv.clear_message
+        @mpv.clear_osd_messages
       end
     end
   end
