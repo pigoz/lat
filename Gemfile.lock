@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/pigoz/ruby-mpv
-  revision: 1cd7b865208a685da4a43797143acf17054f8f0c
+  revision: 36fdf825a94a9333c577631a0b2cbd791269af73
   specs:
     mpv (3.0.1)
       concurrent-ruby (~> 1.1.6)
@@ -89,7 +89,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.6)
     unicode-display_width (1.6.1)
-    zeitwerk (2.2.2)
+    zeitwerk (2.3.0)
 
 PLATFORMS
   ruby

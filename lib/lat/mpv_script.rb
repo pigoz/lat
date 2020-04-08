@@ -29,14 +29,15 @@ module Lat
     end
 
     def wait_event(event)
+      # @fence.wait_until { |x| }
       loop do
         x = @fence.wait1.first
         break if event == x
       end
     end
 
-    def runloop
-      @mpv.runloop
+    def join
+      @mpv.join
     end
 
     def sub_text_changed(event)
