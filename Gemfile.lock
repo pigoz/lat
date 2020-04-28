@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/pigoz/ruby-mpv
-  revision: 36fdf825a94a9333c577631a0b2cbd791269af73
+  revision: c415dbf0c95070541580ad57bee7cef2d815aa11
   specs:
     mpv (3.0.1)
       concurrent-ruby (~> 1.1.6)

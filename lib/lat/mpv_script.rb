@@ -80,7 +80,7 @@ module Lat
       ok, line = @sub2srs.call
 
       if ok
-        @mpv.edit_osd_message(msgid, "exported: #{line}")
+        @mpv.edit_osd_message(msgid, "exported: #{line}", timeout: 1)
       else
         @mpv.edit_osd_message(msgid, "error exporting: #{line}")
       end
