@@ -32,22 +32,14 @@ RSpec.describe Lat::Dict do
   end
 
   it 'looks up katakana n' do
-    expect(dict.call(lemma: 'アイドル')).to eql(
+    expect(dict.call(lemma: 'パンツ')).to eql(
       [
         Lat::Dict::Result.new(
           dictionary: 'myougiden',
-          lemma: 'アイドル',
+          lemma: 'パンツ',
           grammar: 'n',
-          definition:
-            'entertainer whose image is manufactured to cultivate a dedicated consumer fan following',
-          reading: 'アイドル'
-        ),
-        Lat::Dict::Result.new(
-          dictionary: 'myougiden',
-          lemma: 'アイドル',
-          grammar: 'adj-f',
-          definition: 'idle',
-          reading: 'アイドル'
+          definition: 'underpants | pants',
+          reading: 'パンツ'
         )
       ]
     )
