@@ -35,5 +35,9 @@ module Lat
         time: first.sub_start.to_s
       )
     end
+
+    class NoOp < Sub2srs
+      def call; end
+    end
   end
 end

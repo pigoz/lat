@@ -74,9 +74,5 @@ module Lat
         end
       end
     end
-
-    class NoOp < Anki
-      def call; end
-    end
   end
 end
