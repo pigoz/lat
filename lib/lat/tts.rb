@@ -3,7 +3,8 @@
 module Lat
   class Tts
     def initialize(text)
-      @text = text
+      tts_hints = ENV.fetch('TTS_HINTS', '').split('|')
+      @text = tts_hints.reduce(text) { |r, n| r.gsub(*n.split(',')) }
     end
 
     def call
