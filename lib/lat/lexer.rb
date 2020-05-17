@@ -80,6 +80,29 @@ module Lat
         end
       end
 
+      class Ranker
+        Item = Struct.new(:val, :score)
+
+        def initialize(list)
+          @list = list.map { |val| Item.new(val, 0) }
+        end
+
+        def increment(value, &block)
+          @list = @list.map do |x|
+            i = block.call(x.val) ? value : 0
+            Item.new(x.val, x.score + i)
+          end
+        end
+
+        def best
+          @list
+            .select { |x| x.score.positive? }
+            .sort_by(&:score)
+            .reverse
+            .first&.val
+        end
+      end
+
       def to_definition
         l = lemma || surface
         return nil if Blacklist.default.blacklisted?(l)
@@ -87,9 +110,10 @@ module Lat
         return nil if l.chars.all?(&:hiragana?)
         return nil if grammar.in?(%i[particle eos punctuation conj vconj])
 
-        Lat::Dict.new.call(lemma: l).select do |x|
-          x.lemma == l || x.reading == reading
-        end.first
+        ranker = Ranker.new(Lat::Dict.new.call(lemma: l))
+        ranker.increment(2) { |x| x.lemma == l }
+        ranker.increment(1) { |x| x.reading == reading }
+        ranker.best
       end
 
       def to_text
