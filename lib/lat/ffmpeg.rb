@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Lat
   class Ffmpeg
     def initialize(path:, timings:)
@@ -56,6 +58,10 @@ module Lat
         duration,
         '-map',
         "0:a:#{aid - 1}",
+        '-ac',
+        '2',
+        '-af',
+        '"loudnorm=I=-16:TP=-2:LRA=11"',
         output
       ]
       `#{command.join(' ')}`.strip
