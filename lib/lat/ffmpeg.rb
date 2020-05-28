@@ -60,6 +60,8 @@ module Lat
         "0:a:#{aid - 1}",
         '-ac',
         '2',
+        '-q:a',
+        '0',
         '-af',
         '"loudnorm=I=-16:TP=-2:LRA=11"',
         output
