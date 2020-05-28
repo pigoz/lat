@@ -60,6 +60,8 @@ module Lat
         "0:a:#{aid - 1}",
         '-ac',
         '2',
+        '-codec:a',
+        'libmp3lame',
         '-q:a',
         '0',
         '-af',
