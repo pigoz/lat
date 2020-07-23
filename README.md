@@ -10,6 +10,7 @@
 - [myougiden](https://aur.archlinux.org/packages/python-myougiden/)
 - [mecab](https://aur.archlinux.org/packages/python-mecab/)
 - [ffmpeg](https://www.archlinux.org/packages/extra/x86_64/ffmpeg/)
+- [ruby](https://www.archlinux.org/packages/extra/x86_64/ruby/)
 2. Clone this repository
 ```bash
 $ git clone https://github.com/pigoz/lat.git
