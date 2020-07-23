@@ -2,6 +2,8 @@
 ## Overview
 **La**nguage **T**ools is a set of tools to automate language acquisition through immersion. Includes sentence analysis (from books, subtitles) and Anki cards creation.
 
+<img src="https://i.imgur.com/yAaw7hZ.png" width="400" title="subs2srs">  <img src="https://i.imgur.com/ZmEWgGU.jpg" width="500" title="jplookup">
+
 ## Installation
 1. Install the required dependencies
 - [mpv master](https://aur.archlinux.org/packages/mpv-git/) (the current stable release doesn't have the new scripting interface used here)
