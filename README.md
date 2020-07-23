@@ -101,7 +101,7 @@ Edit these settings to your preference
 ```bash
 $ sudo updatedb-myougiden -f
 ```
-## Improvement from [Mpv-nihongo](https://github.com/pigoz/mpv-nihongo)
+## Improvement from [mpv-nihongo](https://github.com/pigoz/mpv-nihongo)
 
 - Code is much better, and every part is test driven which makes adding new features easier
 - Dictionary access is multithreaded
