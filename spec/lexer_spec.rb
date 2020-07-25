@@ -115,21 +115,19 @@ RSpec.describe Lat::Lexer do
 
   tests.each do |t|
     it "converts to furigana (nbl) #{t.first}" do
-      Lat::Blacklist.clear_default
+      Lat::Blacklist.default = Lat::NullBlacklist.new
       x = lexer.to_text(lexer.call(t.first))
       expect(x).to eql(t.second)
     end
 
     it "converts to furigana (fbl) #{t.first}" do
-      path = File.expand_path('./blacklist.txt', __dir__)
-      Lat::Blacklist.default = Lat::FileBlacklist.new(path)
+      Lat::Blacklist.clear_default
       x = lexer.to_text(lexer.call(t.first))
       expect(x).to eql(t.third)
     end
 
     it "looks up lemmas into dictionary (fbl) #{t.first}" do
-      path = File.expand_path('./blacklist.txt', __dir__)
-      Lat::Blacklist.default = Lat::FileBlacklist.new(path)
+      Lat::Blacklist.clear_default
       x = lexer.to_definitions(lexer.call(t.first)).map { |d| "#{d.lemma},#{d.reading}" }.join('|')
       expect(x).to eql(t.fourth)
     end

@@ -14,9 +14,6 @@ srt_path = ARGV.first
 
 raise 'no srt file provided' if srt_path.nil?
 
-path = File.expand_path('./../spec/blacklist.txt', __dir__)
-Lat::Blacklist.default = Lat::FileBlacklist.new(path)
-
 db = Lat::Database.new
 morphemes = db.morphemes
 

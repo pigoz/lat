@@ -48,9 +48,6 @@ command = [
 
 `#{command.join(' ')}`.strip
 
-path = File.expand_path('./../spec/blacklist.txt', __dir__)
-Lat::Blacklist.default = Lat::FileBlacklist.new(path)
-
 sound = File.expand_path("../tmp/#{id}.af.mp3", __dir__)
 image = File.expand_path("../tmp/#{id}.jpg", __dir__)
 

@@ -3,8 +3,8 @@
 require 'config'
 
 Config.load_and_set_settings(
-  File.expand_path('lat-config.yaml', __dir__),
-  File.expand_path('~/lat-config.yaml')
+  File.expand_path('../share/lat.yaml', __dir__),
+  File.expand_path('~/lat.yaml')
 )
 
 require 'active_support/all'

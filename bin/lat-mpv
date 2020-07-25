@@ -10,8 +10,6 @@ $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 require 'mpv'
 require 'lat'
 
-path = File.expand_path('./../spec/blacklist.txt', __dir__)
-Lat::Blacklist.default = Lat::FileBlacklist.new(path)
 client = MPV::Client.script
 client.command('print-text', "lat-mpv started\n")
 Lat::MpvScript.new(client).join

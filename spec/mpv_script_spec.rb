@@ -7,8 +7,6 @@ RSpec.describe Lat::MpvScript do
     skip unless MPV::Server.available?
     @mpv = MPV::Session.new(user_args: %w[--no-config]).client
     @script = Lat::MpvScript.new(@mpv, sub2srsklass: Lat::Sub2srs::NoOp)
-    path = File.expand_path('./blacklist.txt', __dir__)
-    Lat::Blacklist.default = Lat::FileBlacklist.new(path)
     path = File.expand_path('./fixtures/hibike.mkv', __dir__)
     loadfile(path: path, options: 'start=71,pause=yes')
     @script.wait_event(:sub_text_changed)

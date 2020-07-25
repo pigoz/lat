@@ -15,7 +15,4 @@ require 'lat'
 text = ARGV.first
 source = ARGV.second
 
-path = File.expand_path('./../spec/blacklist.txt', __dir__)
-Lat::Blacklist.default = Lat::FileBlacklist.new(path)
-
 puts Lat::Text2srs.new(text, source).call.first
