@@ -47,7 +47,15 @@ RSpec.describe Lat::MpvScript do
     @mpv.command(:keypress, 'b')
     @script.wait_event(:enter_modal_mode)
     @mpv.command(:keypress, '1')
-    @script.wait_event(:select_modal_option)
+    @script.wait_event(:export_done)
+
+    data = @script.sub2srs.data
+    expect(data).to eql([HIBIKE1])
+  end
+
+  it 'exports stuff to anki [direct]' do
+    @mpv.command(:keypress, 'g')
+    @script.wait_event(:export_done)
 
     data = @script.sub2srs.data
     expect(data).to eql([HIBIKE1])
@@ -57,7 +65,7 @@ RSpec.describe Lat::MpvScript do
     @mpv.command(:keypress, 'b')
     @script.wait_event(:enter_modal_mode)
     @mpv.command(:keypress, '2')
-    @script.wait_event(:select_modal_option)
+    @script.wait_event(:export_done)
 
     data = @script.sub2srs.data
     expect(data).to eql([HIBIKE1, HIBIKE2])

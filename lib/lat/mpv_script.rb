@@ -7,7 +7,7 @@ module Lat
     EVENTS = %i[
       jplookup_toggle
       enter_modal_mode
-      select_modal_option
+      export_done
       sub_text_changed
     ].freeze
 
@@ -22,6 +22,7 @@ module Lat
         &method(:jplookup_toggle)
       )
       @mpv.register_keybindings(%w[b], &method(:sub2srs_n))
+      @mpv.register_keybindings(%w[g]) { sub2srs_n_handler_int(1) }
     end
 
     def dispatch(event)
@@ -63,6 +64,10 @@ module Lat
       return unless event.keydown?
 
       count = event.key.to_i
+      sub2srs_n_handler_int(count)
+    end
+
+    def sub2srs_n_handler_int(count)
       @subs = Queue.new
       data =
         (0...count).to_a.reverse.map do |idx|
@@ -85,7 +90,7 @@ module Lat
         @mpv.edit_osd_message(msgid, "error exporting: #{line}")
       end
 
-      dispatch(:select_modal_option)
+      dispatch(:export_done)
     end
 
     def build_sub_data
