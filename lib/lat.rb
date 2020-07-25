@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+require 'config'
+
+Config.load_and_set_settings(
+  File.expand_path('lat-config.yaml', __dir__),
+  File.expand_path('~/lat-config.yaml')
+)
+
 require 'active_support/all'
 require 'lat/version'
 

@@ -2,10 +2,7 @@
 
 module Lat
   class Database
-    ANKI_DATABASE =
-      File.expand_path(
-        '~/Library/Application Support/Anki2/User 1/collection.anki2'
-      )
+    ANKI_DATABASE = Lat::Anki.user_file_path('collection.anki2')
     ANKI_DECKS = { 'sub2srs' => 4, '例文' => 1 }.freeze
 
     def morphemes

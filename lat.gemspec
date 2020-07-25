@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.9'
   spec.add_development_dependency 'rubocop', '~> 0.79.0'
   spec.add_dependency 'activesupport'
+  spec.add_dependency 'config'
   spec.add_dependency 'diff-lcs'
   spec.add_dependency 'google-cloud-text_to_speech'
   spec.add_dependency 'iconv'

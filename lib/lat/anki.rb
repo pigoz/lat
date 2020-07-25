@@ -7,13 +7,17 @@ module Lat
       @data = data
     end
 
-    ANKI_MEDIA_COLLECTION =
-      File.expand_path(
-        '~/Library/Application Support/Anki2/User 1/collection.media'
+    def self.user_file_path(file)
+      File.join(
+        File.expand_path(Settings.anki.collection),
+        file
       )
-    ANKI_DECK_NAME = 'sub2srs'
-    ANKI_NOTE_TYPE = 'Japanese sub2srs'
-    ANKI_TAG_NAME = 'sub2srs'
+    end
+
+    ANKI_MEDIA_COLLECTION = user_file_path('collection.media')
+    ANKI_DECK_NAME = Settings.anki.export.deck_name
+    ANKI_NOTE_TYPE = Settings.anki.export.note_type
+    ANKI_TAG_NAME = Settings.anki.export.tag_name
 
     def call
       ankiapi('changeDeck', cards: [], deck: ANKI_DECK_NAME)

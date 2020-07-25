@@ -1,0 +1,9 @@
+anki:
+  # path to your Anki user folder
+  # contains collection.media and collection.anki2
+  collection: ~/Library/Application Support/Anki2/User 1
+
+  export:
+    deck_name: sub2srs
+    tag_name: sub2srs
+    note_type: Japanese sub2srs
