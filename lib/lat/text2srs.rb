@@ -2,9 +2,11 @@
 
 module Lat
   class Text2srs
-    def initialize(text, source)
+    def initialize(text, source, sound: nil, image: nil)
       @text = text
       @source = source
+      @sound = sound
+      @image = image
     end
 
     def call
@@ -17,12 +19,14 @@ module Lat
       lexer = Lat::Lexer.new
       lexer_results = lexer.call(@text)
       definitions = lexer.to_definitions(lexer_results)
-      sound = Tts.new(@text).call
+      sound = @sound || Tts.new(@text).call
+      image = @image || nil
 
       Anki::CardData.new(
         line: @text,
         reading: lexer.to_text(lexer_results),
         sound: sound,
+        image: image,
         words: definitions.map(&:to_repr_furigana),
         source: @source
       )
