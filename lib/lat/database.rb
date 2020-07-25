@@ -3,7 +3,7 @@
 module Lat
   class Database
     ANKI_DATABASE = Lat::Anki.user_file_path('collection.anki2')
-    ANKI_DECKS = { 'sub2srs' => 4, '例文' => 1 }.freeze
+    ANKI_NOTE_TYPES = Settings.anki.morphemes_fields.to_h.stringify_keys
 
     def morphemes
       require 'parallel'
@@ -18,25 +18,31 @@ module Lat
 
     def load_cards
       require 'sequel'
-      decks = Hash[decks_data]
+      fields = Hash[fields_map]
 
       anki[:cards]
-        .where(did: decks.keys)
         .join_table(:inner, anki[:notes].as(:note), id: :nid)
-        .map { |card| load_card(decks, card) }
+        .where(mid: fields.keys)
+        .map { |card| load_card(fields, card) }
     end
 
-    def load_card(decks, card)
-      field_idx = decks[card[:did]]
+    def load_card(fields, card)
+      field_idx = fields[card[:mid]][:ord]
       text = card[:flds].split("\u{1f}")[field_idx]
       text.gsub(/\[.*\]/, '')
     end
 
-    def decks_data
-      # XXX should use models instead of decks
-      xs = JSON.parse(anki[:col].first[:decks]).values
-      xs.select { |x| x['name'].in?(ANKI_DECKS) }
-        .map { |x| [x['id'], ANKI_DECKS[x['name']]] }
+    def models_data
+      models_json = anki[:col].first[:models]
+      xs = JSON.parse(models_json, symbolize_names: true).values
+      xs.select { |x| x[:name].in?(ANKI_NOTE_TYPES.keys) }
+    end
+
+    def fields_map
+      models_data.map do |x|
+        field_name = ANKI_NOTE_TYPES[x[:name]]
+        [x[:id], x[:flds].select { |f| f[:name] == field_name }.first]
+      end
     end
 
     def anki

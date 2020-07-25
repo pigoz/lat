@@ -7,3 +7,6 @@ anki:
     deck_name: sub2srs
     tag_name: sub2srs
     note_type: Japanese sub2srs
+
+  morphemes_fields:
+    'Japanese sub2srs': 'Line'
