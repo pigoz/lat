@@ -9,7 +9,7 @@ module Lat
 
     def self.user_file_path(file)
       File.join(
-        File.expand_path(Settings.anki.collection),
+        Lat.expand_settings_path(Settings.anki.collection),
         file
       )
     end

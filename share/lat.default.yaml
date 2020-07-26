@@ -1,0 +1,14 @@
+anki:
+  export:
+    deck_name: sub2srs
+    tag_name: sub2srs
+    note_type: Japanese sub2srs
+
+blacklist:
+  morphemes:
+    active: false
+    fields:
+      - note_type: Japanese sub2srs
+        field_name: Line
+  files:
+    - share/blacklist.txt

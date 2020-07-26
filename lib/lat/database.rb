@@ -3,7 +3,9 @@
 module Lat
   class Database
     ANKI_DATABASE = Lat::Anki.user_file_path('collection.anki2')
-    ANKI_NOTE_TYPES = Settings.anki.morphemes_fields.to_h.stringify_keys
+    ANKI_NOTE_TYPES = Hash[Settings.blacklist.morphemes.fields.map do |x|
+      [x[:note_type], x[:field_name]]
+    end]
 
     def morphemes
       require 'parallel'

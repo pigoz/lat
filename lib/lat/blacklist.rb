@@ -17,10 +17,9 @@ module Lat
 
   class SettingsBlacklist
     def initialize
-      base = File.expand_path('../..', __dir__)
-      fs = Settings.blacklist.files.map { |x| File.expand_path(x, base) }
+      fs = Settings.blacklist.files.map { |x| Lat.expand_settings_path(x) }
       @xs = fs.map { |f| FileBlacklist.new(f) }
-      @xs.push(MorphemesBlacklist.new) if Settings.blacklist.morphemes
+      @xs.push(MorphemesBlacklist.new) if Settings.blacklist.morphemes.active
     end
 
     def blacklisted?(lemma)
