@@ -35,6 +35,8 @@ command = [
   '-y',
   '-i',
   "tmp/#{id}.mp3",
+  '-ss',
+  ENV['SS'] || '00:00:00',
   '-ac',
   '2',
   '-codec:a',
