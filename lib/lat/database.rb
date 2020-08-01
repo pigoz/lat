@@ -7,6 +7,15 @@ module Lat
       [x[:note_type], x[:field_name]]
     end]
 
+    ANKI_CARD_TYPES = {
+      new: 0,
+      learning: 1,
+      review: 2,
+      relearning: 3
+    }.freeze
+
+    ANKI_CARD_TYPES_KNOWN = ANKI_CARD_TYPES.slice(:review, :relearning).values
+
     def morphemes
       require 'parallel'
       morphemes_for(load_cards)
@@ -24,7 +33,7 @@ module Lat
 
       anki[:cards]
         .join_table(:inner, anki[:notes].as(:note), id: :nid)
-        .where(mid: fields.keys)
+        .where(mid: fields.keys, type: ANKI_CARD_TYPES_KNOWN)
         .map { |card| load_card(fields, card) }
     end
 
