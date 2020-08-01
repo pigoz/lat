@@ -5,7 +5,7 @@ require_relative './fixtures/hibike'
 RSpec.describe Lat::MpvScript do
   before(:all) do
     skip unless MPV::Server.available?
-    @mpv = MPV::Session.new(user_args: %w[--no-config]).client
+    @mpv = MPV::Session.new(user_args: %w[--no-video --no-config]).client
     @script = Lat::MpvScript.new(@mpv, sub2srsklass: Lat::Sub2srs::NoOp)
     path = File.expand_path('./fixtures/hibike.mkv', __dir__)
     loadfile(path: path, options: 'start=71,pause=yes')
