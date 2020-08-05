@@ -30,7 +30,7 @@ module Lat
         '-ss',
         ss,
         '-i',
-        path.to_json,
+        escape_path(path),
         '-vcodec',
         'mjpeg',
         '-vframes',
@@ -53,7 +53,7 @@ module Lat
         '-ss',
         ss,
         '-i',
-        path.to_json,
+        escape_path(path),
         '-t',
         duration,
         '-map',
@@ -70,6 +70,10 @@ module Lat
       ]
       `#{command.join(' ')}`.strip
       output
+    end
+
+    def escape_path(path)
+      "\"#{path}\""
     end
   end
 end
