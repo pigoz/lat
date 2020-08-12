@@ -6,12 +6,12 @@ RSpec.describe Lat::Dict do
   it 'looks up kanji noun' do
     expect(dict.call(lemma: '漢字')).to eql(
       [
-        Lat::Dict::Result.new(
+        Lat::Dictionary::Result.new(
           dictionary: 'myougiden',
           lemma: '漢字',
-          grammar: 'n',
-          definition: 'kanji | Chinese characters (P)',
-          reading: 'かんじ'
+          grammar: ['n'],
+          definition: ['kanji', 'Chinese characters (P)'],
+          reading: ['かんじ']
         )
       ]
     )
@@ -20,12 +20,12 @@ RSpec.describe Lat::Dict do
   it 'looks up kanji n,vsuru' do
     expect(dict.call(lemma: '勉強')).to eql(
       [
-        Lat::Dict::Result.new(
+        Lat::Dictionary::Result.new(
           dictionary: 'myougiden',
           lemma: '勉強',
-          grammar: 'n,vs',
-          definition: 'study',
-          reading: 'べんきょう'
+          grammar: ['n', 'vs'],
+          definition: ['study'],
+          reading: ['べんきょう']
         )
       ]
     )
@@ -34,12 +34,12 @@ RSpec.describe Lat::Dict do
   it 'looks up katakana n' do
     expect(dict.call(lemma: 'パンツ')).to eql(
       [
-        Lat::Dict::Result.new(
+        Lat::Dictionary::Result.new(
           dictionary: 'myougiden',
           lemma: 'パンツ',
-          grammar: 'n',
-          definition: 'underpants | pants',
-          reading: 'パンツ'
+          grammar: ['n'],
+          definition: ['underpants', 'pants'],
+          reading: ['パンツ']
         )
       ]
     )
@@ -48,12 +48,12 @@ RSpec.describe Lat::Dict do
   it 'looks up hiragana verb' do
     expect(dict.call(lemma: 'ささやく')).to eql(
       [
-        Lat::Dict::Result.new(
+        Lat::Dictionary::Result.new(
           dictionary: 'myougiden',
           lemma: '囁く',
-          grammar: 'v5k,vi;uk',
-          definition: 'to whisper | to murmur',
-          reading: 'ささやく'
+          grammar: ['v5k', 'vi;uk'],
+          definition: ['to whisper', 'to murmur'],
+          reading: ['ささやく']
         )
       ]
     )

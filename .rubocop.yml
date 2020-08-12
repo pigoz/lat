@@ -1,3 +1,6 @@
+AllCops:
+  TargetRubyVersion: 2.7
+
 Style/Documentation:
   Enabled: false
 

@@ -110,6 +110,7 @@ module Lat
 
     def jplookup_off
       @jplookup = false
+      @mpv.clear_osd_messages
     end
 
     def jplookup_toggle(event)

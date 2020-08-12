@@ -17,6 +17,10 @@ module Lat
     File.expand_path(path, File.dirname(__dir__))
   end
 
+  def self.tmp_path(file)
+    File.expand_path(file, expand_settings_path('tmp'))
+  end
+
   def self.test?
     defined?(RSpec)
   end
@@ -69,6 +73,10 @@ require 'lat/blacklist'
 require 'lat/furigana'
 require 'lat/lexer'
 require 'lat/ffmpeg'
+require 'lat/dictionary/result'
+require 'lat/dictionary/downloader'
+require 'lat/dictionary/load_jmdict'
+require 'lat/dictionary/query'
 require 'lat/dict'
 require 'lat/tts'
 require 'lat/anki'

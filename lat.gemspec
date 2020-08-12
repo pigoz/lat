@@ -38,6 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'mojinizer'
   spec.add_dependency 'mpv'
   spec.add_dependency 'natto'
+  spec.add_dependency 'nokogiri'
   spec.add_dependency 'parallel'
   spec.add_dependency 'rest-client'
   spec.add_dependency 'sequel'

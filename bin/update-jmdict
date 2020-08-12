@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+JMDICT_XML = 'JMdict_e'
+JMNEDICT_XML = 'JMnedict.xml'
+
+def download(xml:)
+  url = "http://ftp.monash.edu/pub/nihongo/#{xml}.gz"
+  Lat::Dictionary::Downloader.new(url: url, dst: xml).call
+end
+
+xml1 = download(xml: JMDICT_XML)
+xml2 = download(xml: JMNEDICT_XML)
+
+Lat::Dictionary::LoadJmedict.new(src: xml1).call
+Lat::Dictionary::LoadJmedict.new(src: xml2).call

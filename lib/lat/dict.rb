@@ -2,30 +2,6 @@
 
 module Lat
   class Dict
-    Result =
-      Struct.new(
-        :dictionary,
-        :lemma,
-        :definition,
-        :reading,
-        :grammar,
-        keyword_init: true
-      )
-
-    class Result
-      def to_repr
-        if lemma.chars.any?(&:kanji?)
-          [lemma, "(#{reading})", definition].join(' ')
-        else
-          [lemma, definition].join(' ')
-        end
-      end
-
-      def to_repr_furigana
-        [Furigana.new.call(text: lemma, reading: reading), definition].join(' ')
-      end
-    end
-
     def call(lemma:)
       return [] unless japanese?(lemma)
 
@@ -43,12 +19,12 @@ module Lat
     def build_result(result, lemma)
       parts = result.split("\t")
       d = parse_definition(parts.third)
-      Lat::Dict::Result.new(
+      Lat::Dictionary::Result.new(
         dictionary: 'myougiden',
         lemma: first_item(parts.second) || lemma,
-        grammar: d.fetch('grammar'),
-        definition: d.fetch('definition').split('|').take(2).join(' | '),
-        reading: first_item(parts.first)
+        grammar: d.fetch('grammar').split(','),
+        definition: d.fetch('definition').split('|').take(2),
+        reading: Array(first_item(parts.first))
       )
     end
 

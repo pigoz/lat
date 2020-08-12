@@ -112,7 +112,7 @@ module Lat
 
         ranker = Ranker.new(Lat::Dict.new.call(lemma: l))
         ranker.increment(2) { |x| x.lemma == l }
-        ranker.increment(1) { |x| x.reading == reading }
+        ranker.increment(1) { |x| x.reading_repr == reading }
         ranker.best
       end
 

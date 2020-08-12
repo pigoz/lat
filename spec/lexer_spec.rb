@@ -128,8 +128,10 @@ RSpec.describe Lat::Lexer do
 
     it "looks up lemmas into dictionary (fbl) #{t.first}" do
       Lat::Blacklist.clear_default
-      x = lexer.to_definitions(lexer.call(t.first)).map { |d| "#{d.lemma},#{d.reading}" }.join('|')
-      expect(x).to eql(t.fourth)
+      x = lexer.to_definitions(lexer.call(t.first)).map do |d|
+        "#{d.lemma},#{d.reading_repr}"
+      end
+      expect(x.join('|')).to eql(t.fourth)
     end
   end
 end
