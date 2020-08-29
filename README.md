@@ -24,12 +24,12 @@ $ cd lat
 $ bundle install
 ```
 
-4. Create symbolic link in mpv script folder
+4. Create symbolic link in your mpv scripts folder
 ```bash
-$ ln -nfs bin/lat-mpv path/to/mpv/scripts/lat.run
+$ ln -nfs bin/lat-mpv ~/.mpv/scripts/lat.run
 ```
 
-**NOTE** Replace path/to/mpv with your actual path to [mpv configuration folder](https://wiki.archlinux.org/index.php/Mpv#Configuration) eg: /home/$USER/.mpv
+**NOTE** Sometimes the mpv scripts folder might be following the XDG spec and might be located in `~/.config/mpv/scripts`
 
 ## Configuration
 You have to create a config file at `~/lat.yaml`. Example config file:
