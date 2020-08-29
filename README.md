@@ -11,61 +11,51 @@
 - [mecab](https://aur.archlinux.org/packages/python-mecab/)
 - [ffmpeg](https://www.archlinux.org/packages/extra/x86_64/ffmpeg/)
 - [ruby](https://www.archlinux.org/packages/extra/x86_64/ruby/)
-2. Clone this repository
-```bash
-$ git clone https://github.com/pigoz/lat.git
-```
-3. Install [Bundler](https://bundler.io/)
+
+2. Install [Bundler](https://bundler.io/)
 ```bash
 $ gem install bundler
 ```
-4. Run the following to install gems into LaT
+
+3. Clone repository and install dependencies
 ```bash
+$ git clone https://github.com/pigoz/lat.git
 $ cd lat
 $ bundle install
 ```
-5. Create symbolic link in mpv script folder
 
+4. Create symbolic link in mpv script folder
 ```bash
-$ cd
-$ mkdir path/to/mpv/scripts #create folder if folder 'scripts' does not exist
-$ ln -nfs path/to/lat/bin/lat-mpv path/to/mpv/scripts/lat.run
+$ ln -nfs bin/lat-mpv path/to/mpv/scripts/lat.run
 ```
-**NOTE** Replace path/to/lat with your actual path to lat folder (the folder that you clone) eg: /home/$user/lat
 
-**NOTE** Replace path/to/mpv with your actual path to [mpv configuration folder](https://wiki.archlinux.org/index.php/Mpv#Configuration) eg: /home/$user/.config/mpv
-
-**NOTE** It is crucial to use absolute path (eg: /home/home/$user/lat) not relative paths (e.g. ~ for home dir) for this to work.
+**NOTE** Replace path/to/mpv with your actual path to [mpv configuration folder](https://wiki.archlinux.org/index.php/Mpv#Configuration) eg: /home/$USER/.mpv
 
 ## Configuration
-### Anki
-Edit these settings to your preference
-```bash
- lat/lib/lat/anki.rb
- ```
- ```bash
-    ANKI_MEDIA_COLLECTION =
-      File.expand_path(
-        '~/Library/Application Support/Anki2/User 1/collection.media'
-      )
-    ANKI_DECK_NAME = 'sub2srs'
-    ANKI_NOTE_TYPE = 'Japanese sub2srs'
-    ANKI_TAG_NAME = 'sub2srs'
-```
- ```bash
-    ANKI_MEDIA_COLLECTION =
-      File.expand_path(
-        '/home/$user/.local/share/Anki2/User 1/collection.media'
-      )
-    ANKI_DECK_NAME = '🍕日本語::🥇Sentence Mining'
-    ANKI_NOTE_TYPE = 'MIA Japanese'
-    ANKI_TAG_NAME = 'mpv'
+You have to create a config file at `~/lat.yaml`. Example config file:
+
+```yaml
+anki:
+  collection: ~/Library/Application Support/Anki2/User 1
+  export:
+    deck_name: sub2srs
+    tag_name: sub2srs
+    note_type: Japanese sub2srs
+
+blacklist:
+  morphemes:
+    active: false
+    fields:
+      - note_type: Japanese sub2srs
+        field_name: Line
+  files:
+    - share/blacklist.txt                                   
 ```
 **NOTE** Click [here](https://docs.ankiweb.net/#/files?id=file-locations) for more details on Anki media collection folder
 
-**NOTE** To use subdeck in ANKI_DECK_NAME, simply add :: after parent dack (eg: parent deck::sub deck)
+**NOTE** To use subdecks in `anki.export.deck_name`, simply add `::` after parent deck (eg: `Japanese::sub2srs`)
 
-**NOTE** Make sure that ANKI_NOTE_TYPE have all the fields need (more on later)
+**NOTE** Make sure that `anki.export.note_types` has all the fields needed `Source, Line, Reading, Words, Time, Sound, Image` (more on later)
 
 ```bash
  lat/lib/lat/anki.rb
@@ -98,15 +88,18 @@ Edit these settings to your preference
       end
 ```
 **NOTE** Rename and remove any fields you want. Make sure that the note type have all these fields.
+**TODO** Make this configurable
 
 ### Myougiden
 [Install myougiden](https://github.com/melissaboiko/myougiden) if haven't already and you need compile the dictionary database at least once
 ```bash
 $ sudo updatedb-myougiden -f
 ```
+
 ## Improvement from [mpv-nihongo](https://github.com/pigoz/mpv-nihongo)
 
 - Code is much better, and every part is test driven which makes adding new features easier
 - Dictionary access is multithreaded
 - Generated furigana matches the sigle Kanji, which results in a much nicer alignment. i.e.: 先[せん] 生[せい] instead of 先生[せんせい]. I have a very visual memory so this helped me immensely, and was the feature I could not add to mpv-nihongo since the code was so bad.
 - You can also add stuff to Anki that comes from books (and the code uses TTS to create audio)
+- Blacklist based on your subs2srs deck
