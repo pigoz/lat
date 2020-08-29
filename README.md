@@ -1,13 +1,17 @@
 # LaT
 ## Overview
-**La**nguage **T**ools is a set of tools to automate language acquisition through immersion. Includes sentence analysis (from books, subtitles) and Anki cards creation.
+**La**nguage **T**ools is a set of tools to automate language acquisition through immersion. Includes sentence analysis (from books, subtitles) and Anki cards creation. A screenshot is worth a lot more than words, so here's two screenshots:
 
-<img src="https://i.imgur.com/yAaw7hZ.png" width="400" title="subs2srs">  <img src="https://i.imgur.com/ZmEWgGU.jpg" width="500" title="jplookup">
+### Automatic anki card creation
+<img src="https://user-images.githubusercontent.com/24681/91639632-42db3b80-ea18-11ea-8350-6d226ebc78e9.png" width="400" title="subs2srs">
+
+### Words lookup inside mpv
+<img src="https://user-images.githubusercontent.com/24681/91639666-7d44d880-ea18-11ea-9db9-49310b6432f2.png" width="500" title="jplookup">
 
 ## Installation
 1. Install the required dependencies
 - [mpv master](https://aur.archlinux.org/packages/mpv-git/) (the current stable release doesn't have the new scripting interface used here)
-- [myougiden](https://aur.archlinux.org/packages/python-myougiden/)
+- [myougiden](https://aur.archlinux.org/packages/python-myougiden/) (I'm working on internal dictionaries, but it will take a while)
 - [mecab](https://aur.archlinux.org/packages/python-mecab/)
 - [ffmpeg](https://www.archlinux.org/packages/extra/x86_64/ffmpeg/)
 - [ruby](https://www.archlinux.org/packages/extra/x86_64/ruby/)
@@ -29,7 +33,7 @@ $ bundle install
 $ ln -nfs bin/lat-mpv ~/.mpv/scripts/lat.run
 ```
 
-**NOTE** Sometimes the mpv scripts folder might be following the XDG spec and might be located in `~/.config/mpv/scripts`
+**NOTE** Sometimes the mpv scripts folder might be following the XDG spec and be located in `~/.config/mpv/scripts`
 
 ## Configuration
 You have to create a config file at `~/lat.yaml`. Example config file:
@@ -64,6 +68,11 @@ blacklist:
 **NOTE** To use subdecks in `anki.export.deck_name`, simply add `::` after parent deck (eg: `Japanese::sub2srs`)
 
 **NOTE** To not export a field to Anki set it's value to `null`. (eg: `time: null` will skip the time field)
+
+### mpv Bindings
+
+`l` and `GAMEPAD_ACTION_UP` Are bound to the dictionary lookup
+`b` triggers card creation mode
 
 ### Myougiden
 [Install myougiden](https://github.com/melissaboiko/myougiden) if haven't already and you need compile the dictionary database at least once
