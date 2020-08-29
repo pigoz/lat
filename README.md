@@ -1,6 +1,6 @@
 # LaT
 ## Overview
-**La**nguage **T**ools is a set of tools to automate language acquisition through immersion. Includes sentence analysis (from books, subtitles) and Anki cards creation. A screenshot is worth a lot more than words, so here's two screenshots:
+**La**nguage **T**ools is a set of tools to automate language acquisition through immersion. Includes sentence analysis (from books, subtitles) and Anki cards creation. The most interesting feature is looking up Japanese words of the current subtitle line, and exporting the current subtitle line to Anki. A screenshot is worth a lot more than words, so here's two screenshots:
 
 ### Automatic anki card creation
 <img src="https://user-images.githubusercontent.com/24681/91639632-42db3b80-ea18-11ea-8350-6d226ebc78e9.png" width="400" title="subs2srs">
@@ -71,8 +71,9 @@ blacklist:
 
 ### mpv Bindings
 
-`l` and `GAMEPAD_ACTION_UP` Are bound to the dictionary lookup
-`b` triggers card creation mode
+- `l` and `GAMEPAD_ACTION_UP` Are bound to the dictionary lookup
+- `b` triggers card creation mode starting from the current subtitle
+- `g` triggers card creation mode and automatically selects 1 adjacent subtiles lines
 
 ### Myougiden
 [Install myougiden](https://github.com/melissaboiko/myougiden) if haven't already and you need compile the dictionary database at least once
