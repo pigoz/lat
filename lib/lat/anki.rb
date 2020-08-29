@@ -48,16 +48,17 @@ module Lat
 
     class CardData
       def to_params
+        f = Settings.anki.fields
         result = {
-          Source: source,
-          Line: line,
-          Reading: reading,
-          Words: words.join('<br>')
+          f.source => source,
+          f.line => line,
+          f.reading => reading,
+          f.words => words.join('<br>'),
+          f.time => time,
+          f.sound => sound ? "[sound:#{File.basename(sound)}]" : nil,
+          f.image => image ? "<img src=#{File.basename(image)}>" : nil
         }
-        result[:Time] = time if time
-        result[:Sound] = "[sound:#{File.basename(sound)}]" if sound
-        result[:Image] = "<img src=#{File.basename(image)}>" if image
-        result
+        result.compact.except(nil)
       end
 
       def stage_media

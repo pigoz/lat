@@ -2,7 +2,7 @@
 
 require 'active_support/all'
 require 'lat/version'
-
+require 'config'
 module Lat
   class Error < StandardError; end
   class AssertionError < StandardError; end
@@ -25,14 +25,28 @@ module Lat
     defined?(RSpec)
   end
 
+  def self.load_config_files(*additional)
+    Config.load_and_set_settings(
+      Lat.expand_settings_path('share/lat.default.yaml'),
+      Lat.test? ? Lat.expand_settings_path('share/lat.test.yaml') : nil,
+      Lat.expand_settings_path('~/lat.yaml'),
+      *additional
+    )
+  end
+
+  def self.with_config_files(*files, &block)
+    load_config_files(*files)
+    block.call
+  ensure
+    load_config_files
+  end
+
   class S < Struct
     def self.new(*member_names)
       super(*member_names, keyword_init: true)
     end
   end
 end
-
-require 'config'
 
 Config.setup do |config|
   config.schema do
@@ -42,6 +56,15 @@ Config.setup do |config|
         required(:deck_name).filled(:str?)
         required(:tag_name).filled(:str?)
         required(:note_type).filled(:str?)
+      end
+      required(:fields).schema do
+        optional(:line).filled(:str?)
+        optional(:reading).filled(:str?)
+        optional(:words).maybe(:str?)
+        optional(:image).maybe(:str?)
+        optional(:sound).maybe(:str?)
+        optional(:source).maybe(:str?)
+        optional(:time).maybe(:str?)
       end
     end
     required(:blacklist).schema do
@@ -57,17 +80,13 @@ Config.setup do |config|
   end
 end
 
-Config.load_and_set_settings(
-  Lat.expand_settings_path('share/lat.default.yaml'),
-  Lat.test? ? Lat.expand_settings_path('share/lat.test.yaml') : nil,
-  Lat.expand_settings_path('~/lat.yaml')
-)
-
 class Array
   def cartesian
     first.product(*self[1..-1])
   end
 end
+
+Lat.load_config_files
 
 require 'lat/blacklist'
 require 'lat/furigana'

@@ -1,0 +1,14 @@
+ anki:
+  export:
+    deck_name: sub2srs
+    tag_name: sub2srs
+    note_type: Japanese sub2srs
+
+  fields:
+    source: Source
+    line: Question
+    reading: Reading
+    words: Words
+    time: null
+    sound: Sound
+    image: null

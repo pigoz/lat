@@ -4,6 +4,15 @@ anki:
     tag_name: sub2srs
     note_type: Japanese sub2srs
 
+  fields:
+    source: Source
+    line: Line
+    reading: Reading
+    words: Words
+    time: Time
+    sound: Sound
+    image: Image
+
 blacklist:
   morphemes:
     active: false

@@ -41,6 +41,14 @@ anki:
     deck_name: sub2srs
     tag_name: sub2srs
     note_type: Japanese sub2srs
+  fields:
+    source: Source
+    line: Line
+    reading: Reading
+    words: Words
+    time: Time
+    sound: Sound
+    image: Image
 
 blacklist:
   morphemes:
@@ -49,46 +57,13 @@ blacklist:
       - note_type: Japanese sub2srs
         field_name: Line
   files:
-    - share/blacklist.txt                                   
+    - share/blacklist.txt
 ```
 **NOTE** Click [here](https://docs.ankiweb.net/#/files?id=file-locations) for more details on Anki media collection folder
 
 **NOTE** To use subdecks in `anki.export.deck_name`, simply add `::` after parent deck (eg: `Japanese::sub2srs`)
 
-**NOTE** Make sure that `anki.export.note_types` has all the fields needed `Source, Line, Reading, Words, Time, Sound, Image` (more on later)
-
-```bash
- lat/lib/lat/anki.rb
- ```
-```bash
-    class CardData
-      def to_params
-        result = {
-          Source: source,
-          Line: line,
-          Reading: reading,
-          Words: words.join('<br>')
-        }
-        result[:Time] = time if time
-        result[:Sound] = "[sound:#{File.basename(sound)}]" if sound
-        result[:Image] = "<img src=#{File.basename(image)}>" if image
-        result
-      end
-```
-```bash
-    class CardData
-      def to_params
-        result = {
-          Expression: line,
-          Reading: reading
-        }
-        result[:Audio] = "[sound:#{File.basename(sound)}]" if sound
-        result[:Image] = "<img src=#{File.basename(image)}>" if image
-        result
-      end
-```
-**NOTE** Rename and remove any fields you want. Make sure that the note type have all these fields.
-**TODO** Make this configurable
+**NOTE** To not export a field to Anki set it's value to `null`. (eg: `time: null` will skip the time field)
 
 ### Myougiden
 [Install myougiden](https://github.com/melissaboiko/myougiden) if haven't already and you need compile the dictionary database at least once
