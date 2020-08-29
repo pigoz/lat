@@ -94,13 +94,14 @@ module Lat
     end
 
     def build_sub_data
+      delay = @mpv.get_property('sub-delay').data
       Sub2srs::Data.new(
         apath: @mpv.get_property('path').data,
         aid: @mpv.get_property('aid').data,
         title: @mpv.get_property('media-title').data,
         text: @mpv.get_property('sub-text').data,
-        sub_start: @mpv.get_property('sub-start').data,
-        sub_end: @mpv.get_property('sub-end').data
+        sub_start: @mpv.get_property('sub-start').data + delay.to_f,
+        sub_end: @mpv.get_property('sub-end').data + delay.to_f
       )
     end
 
