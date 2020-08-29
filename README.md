@@ -77,4 +77,4 @@ $ sudo updatedb-myougiden -f
 - Dictionary access is multithreaded
 - Generated furigana matches the sigle Kanji, which results in a much nicer alignment. i.e.: 先[せん] 生[せい] instead of 先生[せんせい]. I have a very visual memory so this helped me immensely, and was the feature I could not add to mpv-nihongo since the code was so bad.
 - You can also add stuff to Anki that comes from books (and the code uses TTS to create audio)
-- Blacklist based on your subs2srs deck
+- Blacklist based on your subs2srs deck (BETA)
