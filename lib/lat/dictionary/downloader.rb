@@ -28,7 +28,7 @@ module Lat
       private
 
       def dst
-        Lat.tmp_path(@dst)
+        Lat.xdg(:cache, @dst)
       end
 
       def open_uri_options

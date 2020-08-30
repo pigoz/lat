@@ -8,7 +8,7 @@ module Lat
     class Query
       def self.db
         @db ||= begin
-          x = Sequel.sqlite(Lat.tmp_path('dictionary.sqlite'))
+          x = Sequel.sqlite(Lat.xdg!(:cache, 'dictionary.sqlite'))
           dir = File.expand_path('migrations', __dir__)
           Sequel::Migrator.run(x, dir)
           x

@@ -17,8 +17,24 @@ module Lat
     File.expand_path(path, File.dirname(__dir__))
   end
 
-  def self.tmp_path(file)
-    File.expand_path(file, expand_settings_path('tmp'))
+  XDG_DEFAULTS = {
+    'XDG_DATA_HOME' => '~/.local/share',
+    'XDG_CONFIG_HOME' => '~/.config',
+    'XDG_CACHE_HOME' => '~/.cache'
+  }.freeze
+
+  def self.xdg(type, path)
+    var = "XDG_#{type.to_s.upcase}_HOME"
+    root = ENV[var] || XDG_DEFAULTS[var]
+    File.expand_path(File.join(root, 'lat', path))
+  end
+
+  def self.xdg!(type, path)
+    require 'fileutils'
+    result = xdg(type, path)
+    dir = File.dirname(result)
+    FileUtils.mkdir_p(dir) unless File.directory?(dir)
+    result
   end
 
   def self.test?
@@ -29,6 +45,7 @@ module Lat
     Config.load_and_set_settings(
       Lat.expand_settings_path('share/lat.default.yaml'),
       Lat.test? ? Lat.expand_settings_path('share/lat.test.yaml') : nil,
+      Lat.xdg(:config, 'config.yaml'),
       Lat.expand_settings_path('~/lat.yaml'),
       *additional
     )
