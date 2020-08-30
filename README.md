@@ -28,7 +28,7 @@ $ cd lat
 $ bundle install
 ```
 
-4. Create symbolic link in your mpv scripts folder
+4. Create a symbolic link in your mpv scripts folder
 ```bash
 $ ln -nfs bin/lat-mpv ~/.mpv/scripts/lat.run
 ```
@@ -36,8 +36,15 @@ $ ln -nfs bin/lat-mpv ~/.mpv/scripts/lat.run
 **NOTE** Sometimes the mpv scripts folder might be following the XDG spec and be located in `~/.config/mpv/scripts`
 
 ## Configuration
-You have to create a config file at `~/lat.yaml`. Example config file:
+You have to create a config file at `~/lat.yaml` or `$XDG_CONFIG_HOME/lat/config.yaml`.
 
+### Minimal required config file
+```yaml
+anki:
+  collection: ~/Library/Application Support/Anki2/User 1
+```
+
+### Full config file
 ```yaml
 anki:
   collection: ~/Library/Application Support/Anki2/User 1
@@ -69,11 +76,11 @@ blacklist:
 
 **NOTE** To not export a field to Anki set it's value to `null`. (eg: `time: null` will skip the time field)
 
-### mpv Bindings
+### mpv default bindings
 
-- `l` and `GAMEPAD_ACTION_UP` Are bound to the dictionary lookup
+- `l` and `GAMEPAD_ACTION_UP` are bound to the dictionary lookup
 - `b` triggers card creation mode starting from the current subtitle
-- `g` triggers card creation mode and automatically selects 1 adjacent subtiles lines
+- `g` triggers card creation mode and automatically selects 1 adjacent subtitles lines
 
 ### Myougiden
 [Install myougiden](https://github.com/melissaboiko/myougiden) if haven't already and you need compile the dictionary database at least once
