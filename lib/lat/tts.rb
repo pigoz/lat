@@ -9,19 +9,23 @@ module Lat
 
     def call
       path = Tempfile.new(['clip', '.mp3'])
-      IO.write(path, tts.audio_content)
+      command = [
+        'AWS_PROFILE=polly',
+        'aws',
+        'polly',
+        'synthesize-speech',
+        "--output-format",
+        "mp3",
+        '--voice-id',
+        'Mizuki',
+        '--text-type',
+        'ssml',
+        '--text',
+        "'<speak>#{@text}</speak>'",
+        path.path
+      ]
+      `#{command.join(" ")}`
       path
-    end
-
-    private
-
-    def tts
-      require 'google/cloud/text_to_speech'
-      Google::Cloud::TextToSpeech.new.synthesize_speech(
-        { text: @text },
-        { language_code: 'ja-JP', name: 'ja-JP-Wavenet-D' },
-        audio_encoding: 'MP3', pitch: 0, speaking_rate: 0.95
-      )
     end
   end
 end
