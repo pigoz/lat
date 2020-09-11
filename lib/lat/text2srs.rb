@@ -17,13 +17,14 @@ module Lat
 
     def card_data
       lexer = Lat::Lexer.new
-      lexer_results = lexer.call(@text)
+      text = @text.gsub(/<\/?[^>]*>/, "")
+      lexer_results = lexer.call(text)
       definitions = lexer.to_definitions(lexer_results)
       sound = @sound || Tts.new(@text).call
       image = @image || nil
 
       Anki::CardData.new(
-        line: @text,
+        line: text,
         reading: lexer.to_text(lexer_results),
         sound: sound,
         image: image,
