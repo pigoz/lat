@@ -26,7 +26,7 @@ module Lat
       ffmpeg = Ffmpeg.new(path: first.apath, timings: timings)
 
       Anki::CardData.new(
-        line: line || '',
+        line: line.blank? ? '~blank' : line,
         reading: lexer.to_text(lexer_results),
         sound: ffmpeg.audio_sample(aid: first.aid),
         image: ffmpeg.screenshot,
