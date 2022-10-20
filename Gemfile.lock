@@ -28,7 +28,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.0.3.2)
+    activesupport (6.0.6)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
@@ -39,11 +39,11 @@ GEM
     ast (2.4.0)
     awesome_print (1.8.0)
     concurrent-ruby (1.1.6)
-    config (2.2.1)
+    config (4.0.0)
       deep_merge (~> 1.2, >= 1.2.1)
       dry-validation (~> 1.0, >= 1.0.0)
     deep_merge (1.2.1)
-    diff-lcs (1.3)
+    diff-lcs (1.5.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dry-configurable (0.11.6)
@@ -110,7 +110,7 @@ GEM
     google-cloud-text_to_speech-v1beta1 (0.2.3)
       gapic-common (~> 0.2)
       google-cloud-errors (~> 1.0)
-    google-protobuf (3.12.2-universal-darwin)
+    google-protobuf (3.21.8-x86_64-linux)
     googleapis-common-protos (1.3.10)
       google-protobuf (~> 3.11)
       googleapis-common-protos-types (>= 1.0.5, < 2.0)
@@ -124,8 +124,8 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (~> 0.14)
-    grpc (1.30.2-universal-darwin)
-      google-protobuf (~> 3.12)
+    grpc (1.50.0-x86_64-linux)
+      google-protobuf (~> 3.21)
       googleapis-common-protos-types (~> 1.0)
     http-accept (1.7.0)
     http-cookie (1.0.3)
@@ -139,8 +139,7 @@ GEM
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2020.0512)
-    mini_portile2 (2.4.0)
-    minitest (5.14.1)
+    minitest (5.16.3)
     moji (1.6)
     mojinizer (0.2.2)
       moji (~> 1.6)
@@ -149,15 +148,16 @@ GEM
     natto (1.2.0)
       ffi (>= 1.9.0)
     netrc (0.11.0)
-    nokogiri (1.10.10)
-      mini_portile2 (~> 2.4.0)
+    nokogiri (1.13.9-x86_64-linux)
+      racc (~> 1.4)
     os (1.1.0)
     parallel (1.19.1)
     parser (2.7.1.3)
       ast (~> 2.4.0)
     public_suffix (4.0.5)
-    rainbow (3.0.0)
-    rake (13.0.1)
+    racc (1.6.0)
+    rainbow (3.1.1)
+    rake (13.0.6)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -184,7 +184,7 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.7)
     ruby-progressbar (1.10.1)
-    sequel (5.34.0)
+    sequel (5.61.0)
     signet (0.14.0)
       addressable (~> 2.3)
       faraday (>= 0.17.3, < 2.0)
@@ -199,10 +199,10 @@ GEM
       unf_ext
     unf_ext (0.0.7.7)
     unicode-display_width (1.6.1)
-    zeitwerk (2.4.0)
+    zeitwerk (2.6.1)
 
 PLATFORMS
-  ruby
+  x86_64-linux
 
 DEPENDENCIES
   awesome_print
